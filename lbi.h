@@ -5,22 +5,28 @@
 #include <cmath>
 #include <string>
 #include <stdexcept>
-#define Infinity {1.79769313486231590772930519078902473361797697894230657273430081157732675805500963132708477322407536021120113879871393357658789768814416622492847430639474124377767893424865485276302219601246094119453082952085005768838150682342462881473913110540827237163350510684586298239947245938479716304835356329624224137216, 308}
-#define Nev_Infinity {-1.79769313486231590772930519078902473361797697894230657273430081157732675805500963132708477322407536021120113879871393357658789768814416622492847430639474124377767893424865485276302219601246094119453082952085005768838150682342462881473913110540827237163350510684586298239947245938479716304835356329624224137216, 308}
+#define Infinity loong::pow(loong::lBI({2, 0}), loong::lBI({1.024, 3}))
+#define Nev_Infinity loong::neg(loong::pow(loong::lBI({2, 0}), loong::lBI({1.024, 3})))
 namespace loong
 {
 	struct lBI;
-	lBI int_to_lBI(double a);
+	lBI to_lBI(double a);
+	lBI plus(lBI a, lBI b);
+	lBI minus(lBI a, lBI b);
+	lBI multi(lBI a, lBI b);
+	lBI div(lBI a, lBI b);
 	lBI div_no_error(lBI a, lBI b);
 	lBI log10(lBI a);
 	lBI logx(lBI a, lBI b);
-	lBI pow(lBI a, lBI b);
+	lBI pow(lBI a, lBI b, bool not_from_sqrtx);
 	lBI sqrtx(lBI a, lBI b);
 	lBI sqrt(lBI a);
 	lBI abs(lBI a);
 	lBI reci(lBI a);
 	lBI neg(lBI a);
 	lBI lBI_format(lBI a);
+	double lBI_to_int(lBI a);
+	std::string lBI_to_str(lBI a);
 	std::istream& operator>>(std::istream& is, lBI& p);
 	std::ostream& operator<<(std::ostream& os, const lBI& p);
 	struct lBI
@@ -62,6 +68,10 @@ namespace loong
 			{
 				printf("ee%lg", std::log10(log10({x, e}).to_int()));
 			}
+			if (a == 7)
+			{
+				printf("10^^%lg", std::log10(log10({x, e}).to_int()));
+			}
 			if (b)
 			{
 				printf("\n");
@@ -97,6 +107,10 @@ namespace loong
 			if (a == 6)
 			{
 				return "ee" + std::to_string(std::log10(log10({x, e}).to_int()));
+			}
+			if (a == 7)
+			{
+				return "10^^" + std::to_string(std::log10(log10({x, e}).to_int()));
 			}
 		}
 		double to_int()
@@ -183,12 +197,12 @@ namespace loong
 		lBI operator<<(const lBI t)const
 		{
 			lBI tmp = {x, e};
-			return tmp * pow(lBI({2, 0}), t);
+			return tmp * pow(lBI({2, 0}), t, 1);
 		}
 		lBI operator>>(const lBI t)const
 		{
 			lBI tmp = {x, e};
-			return tmp / pow(lBI({2, 0}), t);
+			return tmp / pow(lBI({2, 0}), t, 1);
 		}
 		bool operator>(const lBI t)const
 		{
@@ -493,7 +507,7 @@ namespace loong
 			return t >> tmp;
 		}
 	};
-	lBI int_to_lBI(double a)
+	lBI to_lBI(double a)
 	{
 		if (a < 0)
 		{
@@ -508,6 +522,22 @@ namespace loong
 			return {a / std::pow(10, floor(std::log10(a))), floor(std::log10(a))};
 		}
 	}
+	lBI plus(lBI a, lBI b)
+	{
+		return a + b;
+	}
+	lBI minus(lBI a, lBI b)
+	{
+		return a - b;
+	}
+	lBI multi(lBI a, lBI b)
+	{
+		return a * b;
+	}
+	lBI div(lBI a, lBI b)
+	{
+		return a / b;
+	}
 	lBI div_no_error(lBI a, lBI b)
 	{
 		lBI tmp = {a.x / b.x, a.e - b.e};
@@ -519,7 +549,7 @@ namespace loong
 		{
 			throw std::invalid_argument("Natural number is invalid");
 		}
-		return int_to_lBI(std::log10(a.x) + a.e);
+		return to_lBI(std::log10(a.x) + a.e);
 	}
 	lBI logx(lBI a, lBI b = {1, 1})
 	{
@@ -537,25 +567,39 @@ namespace loong
 		}
 		return log10(a) / log10(b);
 	}
-	lBI pow(lBI a, lBI b)
+	lBI pow(lBI a, lBI b, bool not_from_sqrtx = 1)
 	{
+		/*
 		lBI tmpb = reci(b);
 		if ((a < lBI({0, 0})) && (((std::abs((fmod(tmpb.x, 2 / std::pow(10, tmpb.e)))) * std::pow(10, tmpb.e)) <= 1e-8) || ((std::abs(std::abs((fmod(tmpb.x, 2 / std::pow(10, tmpb.e))) - 2 / std::pow(10, tmpb.e))) * std::pow(10, tmpb.e)) <= 1e-8)))
 		{
 			throw std::invalid_argument("Base number is invalid");
 		}
+		*/
 		lBI tmp = {0, 0};
-		tmp.e = (int_to_lBI(a.e) * b).to_int();
-		tmp.x = std::pow(a.x, b.to_int());
-		return tmp.format();
+		tmp.e = (to_lBI(a.e) * b + b / to_lBI(std::log10(a.x))).to_int();
+		tmp.x = 1;
+		tmp.format();
+		if ((std::isnan(tmp.x) || std::isnan(tmp.e)) && not_from_sqrtx)
+		{
+			throw std::invalid_argument("Base number is invalid");
+		}
+		return tmp;
 	}
 	lBI sqrtx(lBI a, lBI b = {2, 0})
 	{
+		/*
 		if ((a < lBI({0, 0})) && (((std::abs((fmod(b.x, 2 / std::pow(10, b.e)))) * std::pow(10, b.e)) <= 1e-8) || ((std::abs(std::abs((fmod(b.x, 2 / std::pow(10, b.e))) - 2 / std::pow(10, b.e))) * std::pow(10, b.e)) <= 1e-8)))
 		{
 			throw std::invalid_argument("Radicand number is invalid");
 		}
-		return pow(a, lBI({1, 0}) / b);
+		*/
+		lBI tmp = pow(a, lBI({1, 0}) / b, 0);
+		if (std::isnan(tmp.x) || std::isnan(tmp.e))
+		{
+			throw std::invalid_argument("Radicand number is invalid");
+		}
+		return tmp;
 	}
 	lBI sqrt(lBI a)
 	{
@@ -576,6 +620,14 @@ namespace loong
 	lBI lBI_format(lBI a)
 	{
 		return a.format();
+	}
+	double lBI_to_int(lBI a)
+	{
+		return a.to_int();
+	}
+	std::string lBI_to_str(lBI a)
+	{
+		return a.to_str();
 	}
 	std::istream& operator>>(std::istream& is, lBI& p) 
 	{
