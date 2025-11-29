@@ -10,7 +10,7 @@
 namespace loong
 {
 	struct lBI;
-	lBI to_lBI(double a);
+	lBI int_to_lBI(double a);
 	lBI plus(lBI a, lBI b);
 	lBI minus(lBI a, lBI b);
 	lBI multi(lBI a, lBI b);
@@ -18,7 +18,7 @@ namespace loong
 	lBI div_no_error(lBI a, lBI b);
 	lBI log10(lBI a);
 	lBI logx(lBI a, lBI b);
-	lBI pow(lBI a, lBI b, bool not_from_sqrtx);
+	lBI pow(lBI a, lBI b, bool not_from_sqrtx = 1);
 	lBI sqrtx(lBI a, lBI b);
 	lBI sqrt(lBI a);
 	lBI abs(lBI a);
@@ -26,7 +26,7 @@ namespace loong
 	lBI neg(lBI a);
 	lBI lBI_format(lBI a);
 	double lBI_to_int(lBI a);
-	std::string lBI_to_str(lBI a);
+	std::string lBI_to_str(lBI a, int b);
 	std::istream& operator>>(std::istream& is, lBI& p);
 	std::ostream& operator<<(std::ostream& os, const lBI& p);
 	struct lBI
@@ -197,12 +197,12 @@ namespace loong
 		lBI operator<<(const lBI t)const
 		{
 			lBI tmp = {x, e};
-			return tmp * pow(lBI({2, 0}), t, 1);
+			return tmp * pow(lBI({2, 0}), t);
 		}
 		lBI operator>>(const lBI t)const
 		{
 			lBI tmp = {x, e};
-			return tmp / pow(lBI({2, 0}), t, 1);
+			return tmp / pow(lBI({2, 0}), t);
 		}
 		bool operator>(const lBI t)const
 		{
@@ -507,7 +507,7 @@ namespace loong
 			return t >> tmp;
 		}
 	};
-	lBI to_lBI(double a)
+	lBI int_to_lBI(double a)
 	{
 		if (a < 0)
 		{
@@ -549,7 +549,7 @@ namespace loong
 		{
 			throw std::invalid_argument("Natural number is invalid");
 		}
-		return to_lBI(std::log10(a.x) + a.e);
+		return int_to_lBI(std::log10(a.x) + a.e);
 	}
 	lBI logx(lBI a, lBI b = {1, 1})
 	{
@@ -567,7 +567,7 @@ namespace loong
 		}
 		return log10(a) / log10(b);
 	}
-	lBI pow(lBI a, lBI b, bool not_from_sqrtx = 1)
+	lBI pow(lBI a, lBI b, bool not_from_sqrtx)
 	{
 		/*
 		lBI tmpb = reci(b);
@@ -577,7 +577,7 @@ namespace loong
 		}
 		*/
 		lBI tmp = {0, 0};
-		tmp.e = (to_lBI(a.e) * b + b / to_lBI(std::log10(a.x))).to_int();
+		tmp.e = (int_to_lBI(a.e) * b + b / int_to_lBI(std::log10(a.x))).to_int();
 		tmp.x = 1;
 		tmp.format();
 		if ((std::isnan(tmp.x) || std::isnan(tmp.e)) && not_from_sqrtx)
@@ -625,9 +625,9 @@ namespace loong
 	{
 		return a.to_int();
 	}
-	std::string lBI_to_str(lBI a)
+	std::string lBI_to_str(lBI a, int b)
 	{
-		return a.to_str();
+		return a.to_str(b);
 	}
 	std::istream& operator>>(std::istream& is, lBI& p) 
 	{
