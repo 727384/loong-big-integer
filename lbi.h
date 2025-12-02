@@ -566,6 +566,18 @@ namespace loong
 			*this = *this - lBI({1, 0});
 			return tmp - lBI({1, 0});
 		}
+		lBI operator++(int)
+		{
+			lBI tmp = *this;
+			*this = tmp + lBI({1, 0});
+			return tmp;
+		}
+		lBI operator--(int)
+		{
+			lBI tmp = *this;
+			*this = *this - lBI({1, 0});
+			return tmp;
+		}
 		lBI operator<<=(const lBI t)
 		{
 			lBI tmp = *this;
