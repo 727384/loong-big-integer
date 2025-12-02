@@ -7,6 +7,7 @@
 #include <stdexcept>
 #define Infinity loong::pow(loong::lBI({2, 0}), loong::lBI({1.024, 3}))
 #define Nev_Infinity loong::neg(loong::pow(loong::lBI({2, 0}), loong::lBI({1.024, 3})))
+#define True_Infinity int_to_lBI(pow(2, 1024))
 namespace loong
 {
 	struct lBI;
@@ -36,7 +37,7 @@ namespace loong
 		lBI input()
 		{
 			scanf("%lf%lf", &x, &e);
-			return {x, e};
+			return (*this).format();
 		}
 		lBI print(int a = 0, bool b = 1)
 		{
@@ -58,7 +59,18 @@ namespace loong
 			}
 			if (a == 4)
 			{
-				printf("e%lg", log10({x, e}).to_int());
+				if (*this < lBI({0, 0}))
+				{
+					printf("-e%lg", log10(neg({x, e})).to_int());
+				}
+				else if (*this == lBI({0, 0}))
+				{
+					printf("e(-inf)");
+				}
+				else
+				{
+					printf("e%lg", log10({x, e}).to_int());
+				}
 			}
 			if (a == 5)
 			{
@@ -66,11 +78,33 @@ namespace loong
 			}
 			if (a == 6)
 			{
-				printf("ee%lg", std::log10(log10({x, e}).to_int()));
+				if (*this < lBI({0, 0}) && neg({x, e}) >= lBI({0, 0}))
+				{
+					printf("-ee%lg", log10(log10(neg({x, e}))).to_int());
+				}
+				else if (*this == lBI({0, 0}) || log10(neg({x, e})) <= lBI({0, 0}))
+				{
+					throw std::invalid_argument("Invalid input");
+				}
+				else
+				{
+					printf("ee%lg", log10(log10({x, e})).to_int());
+				}
 			}
 			if (a == 7)
 			{
-				printf("10^^%lg", std::log10(log10({x, e}).to_int()));
+				if (*this < lBI({0, 0}) && neg({x, e}) >= lBI({0, 0}))
+				{
+					printf("-10^^%lg", log10(log10(neg({x, e}))).to_int());
+				}
+				else if (*this == lBI({0, 0}) || log10(neg({x, e})) <= lBI({0, 0}))
+				{
+					throw std::invalid_argument("Invalid input");
+				}
+				else
+				{
+					printf("10^^%lg", log10(log10({x, e})).to_int());
+				}
 			}
 			if (b)
 			{
@@ -106,15 +140,41 @@ namespace loong
 			}
 			if (a == 6)
 			{
-				return "ee" + std::to_string(std::log10(log10({x, e}).to_int()));
+				if (*this < lBI({0, 0}) && neg({x, e}) >= lBI({0, 0}))
+				{
+					return "-ee" + std::to_string(log10(log10(neg({x, e}))).to_int());
+				}
+				else if (*this == lBI({0, 0}) || log10(neg({x, e})) <= lBI({0, 0}))
+				{
+					throw std::invalid_argument("Invalid input");
+				}
+				else
+				{
+					return "ee" + std::to_string(log10(log10({x, e})).to_int());
+				}
 			}
 			if (a == 7)
 			{
-				return "10^^" + std::to_string(std::log10(log10({x, e}).to_int()));
+				if (*this < lBI({0, 0}) && neg({x, e}) >= lBI({0, 0}))
+				{
+					return "-10^^" + std::to_string(log10(log10(neg({x, e}))).to_int());
+				}
+				else if (*this == lBI({0, 0}) || log10(neg({x, e})) <= lBI({0, 0}))
+				{
+					throw std::invalid_argument("Invalid input");
+				}
+				else
+				{
+					return "10^^" + std::to_string(log10(log10({x, e})).to_int());
+				}
 			}
 		}
 		double to_int()
 		{
+			if (std::isnan(x * std::pow(10, e)))
+			{
+				throw std::out_of_range("Number is out of -2^1024 ~ 2^1024");
+			}
 			return x * std::pow(10, e);
 		}
 		lBI format()
@@ -166,17 +226,17 @@ namespace loong
 		lBI operator-(const lBI t)const
 		{
 			lBI tmp = {};
-			if (t.e > e)
+			if (e > t.e)
 			{
-				tmp = {t.x * std::pow(10, e - t.e) - x, t.e};
+				tmp = {x - t.x * std::pow(10, t.e - e), e};
 			}
-			else if (t.e < e)
+			else if (e < t.e)
 			{
-				tmp = {t.x - x * std::pow(10, e - t.e), e};
+				tmp = {x * std::pow(10, e - t.e) - t.x, t.e};
 			}
 			else
 			{
-				tmp = {t.x - x, e};
+				tmp = {x - t.x, e};
 			}
 			return tmp.format();
 		}
@@ -446,7 +506,7 @@ namespace loong
 			lBI ttmp = {t.x, t.e};
 			tmp.format();
 			ttmp.format();
-			if ((tmp.e == ttmp.e) && (tmp.x == ttmp.x))
+			if (tmp.e == ttmp.e && tmp.x == ttmp.x)
 			{
 				return true;
 			}
@@ -461,7 +521,7 @@ namespace loong
 			lBI ttmp = {t.x, t.e};
 			tmp.format();
 			ttmp.format();
-			if ((tmp.e != ttmp.e) || (tmp.x != ttmp.x))
+			if (tmp.e != ttmp.e || tmp.x != ttmp.x)
 			{
 				return true;
 			}
@@ -479,8 +539,8 @@ namespace loong
 		lBI operator-=(const lBI t)
 		{
 			lBI tmp = *this;
-			*this = t - tmp;
-			return t - tmp;
+			*this = tmp - t;
+			return tmp - t;
 		}
 		lBI operator*=(const lBI t)
 		{
@@ -491,8 +551,20 @@ namespace loong
 		lBI operator/=(const lBI t)
 		{
 			lBI tmp = *this;
-			*this = t / tmp;
-			return t / tmp;
+			*this = tmp / t;
+			return tmp / t;
+		}
+		lBI operator++()
+		{
+			lBI tmp = *this;
+			*this = tmp + lBI({1, 0});
+			return tmp + lBI({1, 0});
+		}
+		lBI operator--()
+		{
+			lBI tmp = *this;
+			*this = *this - lBI({1, 0});
+			return tmp - lBI({1, 0});
 		}
 		lBI operator<<=(const lBI t)
 		{
@@ -507,7 +579,7 @@ namespace loong
 			return t >> tmp;
 		}
 	};
-	lBI int_to_lBI(double a)
+	lBI int_to_lBI(double a = 0)
 	{
 		if (a < 0)
 		{
