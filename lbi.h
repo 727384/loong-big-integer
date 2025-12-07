@@ -590,6 +590,22 @@ namespace loong
 			*this = t >> tmp;
 			return t >> tmp;
 		}
+		lBI()
+		{
+			this->x = 0;
+			this->e = 0;			 
+		}
+		lBI(double a)
+		{
+			lBI tmp = int_to_lBI(a);
+			this->x = tmp.x;
+			this->e = tmp.e;
+		}
+		lBI(double a, double b)
+		{
+			this->x = a;
+			this->e = b;
+		}
 	};
 	lBI int_to_lBI(double a = 0)
 	{
@@ -661,7 +677,14 @@ namespace loong
 		}
 		*/
 		lBI tmp = {0, 0};
-		tmp.e = (int_to_lBI(a.e) * b + b / int_to_lBI(std::log10(a.x))).to_int();
+		if (a.x == 1)
+		{
+			tmp.e = (int_to_lBI(a.e) * b).to_int();
+		}
+		else
+		{
+			tmp.e = (int_to_lBI(a.e) * b + b / int_to_lBI(std::log10(a.x))).to_int();
+		}
 		tmp.x = 1;
 		tmp.format();
 		if ((std::isnan(tmp.x) || std::isnan(tmp.e)) && not_from_sqrtx)
@@ -716,6 +739,7 @@ namespace loong
 	std::istream& operator>>(std::istream& is, lBI& p) 
 	{
 	    is >> p.x >> p.e;
+	    p.format();
 	    return is; 
 	}
 	std::ostream& operator<<(std::ostream& os, const lBI& p) 
