@@ -683,7 +683,7 @@ namespace loong
 		}
 		else
 		{
-			tmp.e = (int_to_lBI(a.e) * b + b / int_to_lBI(std::log10(a.x))).to_int();
+			tmp.e = (int_to_lBI(a.e) * b + b * int_to_lBI(std::log10(a.x))).to_int();
 		}
 		tmp.x = 1;
 		tmp.format();
