@@ -26,6 +26,7 @@ namespace loong
 	lBI reci(lBI a);
 	lBI neg(lBI a);
 	lBI lBI_format(lBI a);
+	lBI print_lBI(lBI a, int b, bool c);
 	double lBI_to_int(lBI a);
 	std::string lBI_to_str(lBI a, int b);
 	std::istream& operator>>(std::istream& is, lBI& p);
@@ -39,7 +40,7 @@ namespace loong
 			scanf("%lf%lf", &x, &e);
 			return (*this).format();
 		}
-		lBI print(int a = 0, bool b = 1)
+		lBI print(int a = 9, bool b = 0)
 		{
 			if (a == 0)
 			{
@@ -106,13 +107,32 @@ namespace loong
 					printf("10^^%lg", log10(log10({x, e})).to_int());
 				}
 			}
+			if (a == 8)
+			{
+				printf("%lg", lBI_to_int(*this));
+			}
+			if (a == 9)
+			{
+				if (std::fabs(e) < 9)
+				{
+					printf("%lg", lBI_to_int(*this));
+				}
+				else if (std::fabs(e) < 1e9)
+				{
+					printf("%lfe%lg", x, e);
+				}
+				else 
+				{
+					printf("e%lg", log10({x, e}).to_int());
+				}
+			}			
 			if (b)
 			{
 				printf("\n");
 			}
 			return {x, e};
 		}
-		std::string to_str(int a = 0)
+		std::string to_str(int a = 9)
 		{
 			if (a == 0)
 			{
@@ -166,6 +186,25 @@ namespace loong
 				else
 				{
 					return "10^^" + std::to_string(log10(log10({x, e})).to_int());
+				}
+			}
+			if (a == 8)
+			{
+				return std::to_string(lBI_to_int(*this));
+			}
+			if (a == 9)
+			{
+				if (std::fabs(e) < 9)
+				{
+					return std::to_string(lBI_to_int(*this));
+				}
+				else if (std::fabs(e) < 1e9)
+				{
+					return std::to_string(x) + "e" + std::to_string(e);
+				}
+				else 
+				{
+					return "e" + std::to_string(log10({x, e}).to_int());
 				}
 			}
 		}
@@ -728,11 +767,15 @@ namespace loong
 	{
 		return a.format();
 	}
+	lBI print_lBI(lBI a, int b = 9, bool c = 0)
+	{
+		return a.print(b, c);
+	}
 	double lBI_to_int(lBI a)
 	{
 		return a.to_int();
 	}
-	std::string lBI_to_str(lBI a, int b)
+	std::string lBI_to_str(lBI a, int b = 9)
 	{
 		return a.to_str(b);
 	}
@@ -744,7 +787,18 @@ namespace loong
 	}
 	std::ostream& operator<<(std::ostream& os, const lBI& p) 
 	{
-	    os << p.x << "e" << p.e;
+		if (std::fabs(p.e) < 9)
+		{
+			os << lBI_to_int(p);
+		}
+		else if (std::fabs(p.e) < 1e9)
+		{
+			os << p.x << "e" << p.e;
+		}
+		else 
+		{
+			os << "e" << log10(p).to_int();
+		}
 	    return os; 
 	}
 }
