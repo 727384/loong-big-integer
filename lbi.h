@@ -25,6 +25,7 @@ namespace loong
 	lBI abs(lBI a);
 	lBI reci(lBI a);
 	lBI neg(lBI a);
+	bool isnan(lBI a);
 	lBI lBI_format(lBI a);
 	lBI print_lBI(lBI a, int b, bool c);
 	double lBI_to_int(lBI a);
@@ -126,6 +127,36 @@ namespace loong
 					printf("e%lg", log10({x, e}).to_int());
 				}
 			}			
+			if (a == 10)
+			{
+				if (std::fabs(e) < 9)
+				{
+					printf("%lg", lBI_to_int(*this));
+				}
+				else if (std::fabs(e) < 1e9)
+				{
+					printf("%lf*10^%lg", x, e);
+				}
+				else 
+				{
+					printf("10^^%lg", log10({x, e}).to_int());
+				}
+			}			
+			if (a == 11)
+			{
+				if (std::fabs(e) < 9)
+				{
+					printf("%lg", lBI_to_int(*this));
+				}
+				else if (std::fabs(e) < 1e9)
+				{
+					printf("%lfx10^%lg", x, e);
+				}
+				else 
+				{
+					printf("10^^%lg", log10({x, e}).to_int());
+				}
+			}			
 			if (b)
 			{
 				printf("\n");
@@ -205,6 +236,36 @@ namespace loong
 				else 
 				{
 					return "e" + std::to_string(log10({x, e}).to_int());
+				}
+			}
+			if (a == 10)
+			{
+				if (std::fabs(e) < 9)
+				{
+					return std::to_string(lBI_to_int(*this));
+				}
+				else if (std::fabs(e) < 1e9)
+				{
+					return std::to_string(x) + "*10^" + std::to_string(e);
+				}
+				else 
+				{
+					return "10^^" + std::to_string(log10({x, e}).to_int());
+				}
+			}
+			if (a == 11)
+			{
+				if (std::fabs(e) < 9)
+				{
+					return std::to_string(lBI_to_int(*this));
+				}
+				else if (std::fabs(e) < 1e9)
+				{
+					return std::to_string(x) + "x10^" + std::to_string(e);
+				}
+				else 
+				{
+					return "10^^" + std::to_string(log10({x, e}).to_int());
 				}
 			}
 		}
@@ -762,6 +823,17 @@ namespace loong
 	lBI neg(lBI a)
 	{
 		return lBI({0, 0}) - a;
+	}
+	bool isnan(lBI a)
+	{
+		if (std::isnan(a.x) || std::isnan(a.e))
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 	lBI lBI_format(lBI a)
 	{
