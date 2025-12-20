@@ -354,6 +354,16 @@ namespace loong
 			lBI tmp = {x / t.x, e - t.e};
 			return tmp.format();
 		}
+		lBI operator+()const
+		{
+			return lBI_format(*this);
+		}
+		lBI operator-()const
+		{
+			lBI tmp = *this;
+			tmp.x = - tmp.x;
+			return tmp.format();
+		}
 		lBI operator<<(const lBI t)const
 		{
 			lBI tmp = {x, e};
@@ -363,6 +373,10 @@ namespace loong
 		{
 			lBI tmp = {x, e};
 			return tmp / pow(lBI({2, 0}), t);
+		}
+		lBI operator~()const
+		{
+			return - *this - 1;
 		}
 		bool operator>(const lBI t)const
 		{
@@ -822,7 +836,7 @@ namespace loong
 	}
 	lBI neg(lBI a)
 	{
-		return lBI({0, 0}) - a;
+		return - a;
 	}
 	bool isnan(lBI a)
 	{
