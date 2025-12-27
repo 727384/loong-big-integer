@@ -11,15 +11,17 @@
 namespace loong
 {
 	struct lBI;
-	lBI int_to_lBI(double a);
+	lBI int_to_lBI(double a = 0);
 	lBI plus(lBI a, lBI b);
 	lBI minus(lBI a, lBI b);
 	lBI multi(lBI a, lBI b);
-	lBI div(lBI a, lBI b);
+	lBI div(lBI a, lBI b, bool no_error = 1);
 	lBI div_no_error(lBI a, lBI b);
+	lBI mod(lBI a, lBI b, bool no_error = 1);
+	lBI mod_no_error(lBI a, lBI b);
 	lBI log10(lBI a);
 	lBI logx(lBI a, lBI b);
-	lBI pow(lBI a, lBI b, bool not_from_sqrtx = 1);
+	lBI pow(lBI a, lBI b, bool no_error = 1);
 	lBI sqrtx(lBI a, lBI b);
 	lBI sqrt(lBI a);
 	lBI abs(lBI a);
@@ -28,7 +30,7 @@ namespace loong
 	bool isnan(lBI a);
 	lBI lBI_format(lBI a);
 	lBI print_lBI(lBI a, int b, bool c);
-	double lBI_to_int(lBI a);
+	double lBI_to_int(lBI a, bool no_error = 0);
 	std::string lBI_to_str(lBI a, int b);
 	std::istream& operator>>(std::istream& is, lBI& p);
 	std::ostream& operator<<(std::ostream& os, const lBI& p);
@@ -269,9 +271,9 @@ namespace loong
 				}
 			}
 		}
-		double to_int()
+		double to_int(bool no_error = 0)
 		{
-			if (std::isnan(x * std::pow(10, e)))
+			if (std::isnan(x * std::pow(10, e)) && !no_error && Nev_Infinity < *this && *this < Infinity)
 			{
 				throw std::out_of_range("Number is out of -2^1024 ~ 2^1024");
 			}
@@ -353,6 +355,14 @@ namespace loong
 			}
 			lBI tmp = {x / t.x, e - t.e};
 			return tmp.format();
+		}
+		lBI operator%(const lBI t)const
+		{
+			if (t.x == 0)
+			{
+				throw std::invalid_argument("Modulo by zero error");
+			}
+			return int_to_lBI(std::fmod(x, lBI_to_int(t / int_to_lBI(std::pow(10, t.e)), 1)) * std::pow(10, e));
 		}
 		lBI operator+()const
 		{
@@ -721,7 +731,7 @@ namespace loong
 			this->e = b;
 		}
 	};
-	lBI int_to_lBI(double a = 0)
+	lBI int_to_lBI(double a)
 	{
 		if (a < 0)
 		{
@@ -748,14 +758,36 @@ namespace loong
 	{
 		return a * b;
 	}
-	lBI div(lBI a, lBI b)
+	lBI div(lBI a, lBI b, bool no_error)
 	{
-		return a / b;
+		if (no_error)
+		{
+			return div_no_error(a, b);
+		}
+		else
+		{
+			return a / b;
+		}
 	}
 	lBI div_no_error(lBI a, lBI b)
 	{
 		lBI tmp = {a.x / b.x, a.e - b.e};
 		return tmp.format();
+	}
+	lBI mod(lBI a, lBI b, bool no_error)
+	{
+		if (no_error)
+		{
+			return mod_no_error(a, b);
+		}
+		else
+		{
+			return a % b;
+		}
+	}
+	lBI mod_no_error(lBI a, lBI b)
+	{
+		return int_to_lBI(std::fmod(a.x, lBI_to_int(b / int_to_lBI(std::pow(10, b.e)), 1)) * std::pow(10, a.e));
 	}
 	lBI log10(lBI a)
 	{
@@ -763,7 +795,7 @@ namespace loong
 		{
 			throw std::invalid_argument("Natural number is invalid");
 		}
-		return int_to_lBI(std::log10(a.x) + a.e);
+		return int_to_lBI(std::log10(a.x)) + int_to_lBI(a.e);
 	}
 	lBI logx(lBI a, lBI b = {1, 1})
 	{
@@ -781,27 +813,30 @@ namespace loong
 		}
 		return log10(a) / log10(b);
 	}
-	lBI pow(lBI a, lBI b, bool not_from_sqrtx)
+	lBI pow(lBI a, lBI b, bool no_error)
 	{
-		/*
-		lBI tmpb = reci(b);
-		if ((a < lBI({0, 0})) && (((std::abs((fmod(tmpb.x, 2 / std::pow(10, tmpb.e)))) * std::pow(10, tmpb.e)) <= 1e-8) || ((std::abs(std::abs((fmod(tmpb.x, 2 / std::pow(10, tmpb.e))) - 2 / std::pow(10, tmpb.e))) * std::pow(10, tmpb.e)) <= 1e-8)))
-		{
-			throw std::invalid_argument("Base number is invalid");
-		}
-		*/
 		lBI tmp = {0, 0};
-		if (a.x == 1)
+		if (a.x == 0)
 		{
-			tmp.e = (int_to_lBI(a.e) * b).to_int();
+			if (b <= 0)
+			{
+				throw std::invalid_argument("Natural number is invalid");
+			}
+			tmp.e = 0;
+			tmp.x = 0;
+		}
+		else if (a.x == 1)
+		{
+			tmp.e = (int_to_lBI(a.e) * b).to_int(1);
+			tmp.x = 1;
 		}
 		else
 		{
-			tmp.e = (int_to_lBI(a.e) * b + b * int_to_lBI(std::log10(a.x))).to_int();
+			tmp.e = (int_to_lBI(a.e) * b + b * int_to_lBI(std::log10(a.x))).to_int(1);
+			tmp.x = 1;
 		}
-		tmp.x = 1;
 		tmp.format();
-		if ((std::isnan(tmp.x) || std::isnan(tmp.e)) && not_from_sqrtx)
+		if ((std::isnan(tmp.x) || std::isnan(tmp.e)) && !no_error)
 		{
 			throw std::invalid_argument("Base number is invalid");
 		}
@@ -809,12 +844,6 @@ namespace loong
 	}
 	lBI sqrtx(lBI a, lBI b = {2, 0})
 	{
-		/*
-		if ((a < lBI({0, 0})) && (((std::abs((fmod(b.x, 2 / std::pow(10, b.e)))) * std::pow(10, b.e)) <= 1e-8) || ((std::abs(std::abs((fmod(b.x, 2 / std::pow(10, b.e))) - 2 / std::pow(10, b.e))) * std::pow(10, b.e)) <= 1e-8)))
-		{
-			throw std::invalid_argument("Radicand number is invalid");
-		}
-		*/
 		lBI tmp = pow(a, lBI({1, 0}) / b, 0);
 		if (std::isnan(tmp.x) || std::isnan(tmp.e))
 		{
@@ -857,9 +886,9 @@ namespace loong
 	{
 		return a.print(b, c);
 	}
-	double lBI_to_int(lBI a)
+	double lBI_to_int(lBI a, bool no_error)
 	{
-		return a.to_int();
+		return a.to_int(no_error);
 	}
 	std::string lBI_to_str(lBI a, int b = 9)
 	{
