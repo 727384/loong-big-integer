@@ -19,6 +19,8 @@ namespace loong
 	lBI div_no_error(lBI a, lBI b);
 	lBI mod(lBI a, lBI b, bool no_error = 1);
 	lBI mod_no_error(lBI a, lBI b);
+	lBI floor(lBI a);
+	lBI ceil(lBI a);
 	lBI log10(lBI a);
 	lBI logx(lBI a, lBI b);
 	lBI pow(lBI a, lBI b, bool no_error = 1);
@@ -283,8 +285,8 @@ namespace loong
 		{
 			if (std::floor(e) != e)
 			{
-				x *= std::pow(10, e - floor(e));
-				e = floor(e);
+				x *= std::pow(10, e - std::floor(e));
+				e = std::floor(e);
 			}
 			if (x == 0)
 			{
@@ -293,13 +295,13 @@ namespace loong
 			}
 			else if (x < 1)
 			{
-				e += floor(std::log10(fabs(x)));
-				x = x / std::pow(10, floor(std::log10(fabs(x))));
+				e += std::floor(std::log10(fabs(x)));
+				x = x / std::pow(10, std::floor(std::log10(fabs(x))));
 			}
 			else if (x >= 10)
 			{
-				e += floor(std::log10(fabs(x)));
-				x = x / std::pow(10, floor(std::log10(fabs(x))));
+				e += std::floor(std::log10(fabs(x)));
+				x = x / std::pow(10, std::floor(std::log10(fabs(x))));
 			}
 			else
 			{
@@ -735,7 +737,7 @@ namespace loong
 	{
 		if (a < 0)
 		{
-			return {(- a) / std::pow(10, floor(std::log10(std::abs(a)))), floor(std::log10(std::abs(a)))};
+			return {(- a) / std::pow(10, std::floor(std::log10(std::abs(a)))), std::floor(std::log10(std::abs(a)))};
 		}
 		else if (a == 0)
 		{
@@ -743,7 +745,7 @@ namespace loong
 		}
 		else
 		{
-			return {a / std::pow(10, floor(std::log10(a))), floor(std::log10(a))};
+			return {a / std::pow(10, std::floor(std::log10(a))), std::floor(std::log10(a))};
 		}
 	}
 	lBI plus(lBI a, lBI b)
@@ -788,6 +790,21 @@ namespace loong
 	lBI mod_no_error(lBI a, lBI b)
 	{
 		return int_to_lBI(std::fmod(a.x, lBI_to_int(b / int_to_lBI(std::pow(10, b.e)), 1)) * std::pow(10, a.e));
+	}
+	lBI floor(lBI a)
+	{
+		return a - mod(a, lBI({1, 0}));
+	}
+	lBI ceil(lBI a)
+	{
+		if (mod(a, lBI({1, 0})) != lBI({0, 0}))
+		{
+			return floor(a) + lBI({1, 0});
+		}
+		else
+		{
+			return a;
+		}
 	}
 	lBI log10(lBI a)
 	{
