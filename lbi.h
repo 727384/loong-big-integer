@@ -33,7 +33,7 @@ namespace loong
 	lBI lBI_format(lBI a);
 	lBI print_lBI(lBI a, int b, bool c);
 	double lBI_to_int(lBI a, bool no_error = 0);
-	std::string lBI_to_str(lBI a, int b);
+	std::string lBI_to_str(lBI a, int b = 9);
 	std::istream& operator>>(std::istream& is, lBI& p);
 	std::ostream& operator<<(std::ostream& os, const lBI& p);
 	struct lBI
@@ -118,7 +118,11 @@ namespace loong
 			}
 			if (a == 9)
 			{
-				if (std::fabs(e) < 9)
+				if (isnan(*this))
+				{
+					printf("nan");
+				}
+				else if (std::fabs(e) < 9)
 				{
 					printf("%lg", lBI_to_int(*this));
 				}
@@ -133,7 +137,11 @@ namespace loong
 			}			
 			if (a == 10)
 			{
-				if (std::fabs(e) < 9)
+				if (isnan(*this))
+				{
+					printf("nan");
+				}
+				else if (std::fabs(e) < 9)
 				{
 					printf("%lg", lBI_to_int(*this));
 				}
@@ -148,7 +156,11 @@ namespace loong
 			}			
 			if (a == 11)
 			{
-				if (std::fabs(e) < 9)
+				if (isnan(*this))
+				{
+					printf("nan");
+				}
+				else if (std::fabs(e) < 9)
 				{
 					printf("%lg", lBI_to_int(*this));
 				}
@@ -229,7 +241,11 @@ namespace loong
 			}
 			if (a == 9)
 			{
-				if (std::fabs(e) < 9)
+				if (isnan(*this))
+				{
+					return "nan";
+				}
+				else if (std::fabs(e) < 9)
 				{
 					return std::to_string(lBI_to_int(*this));
 				}
@@ -244,7 +260,11 @@ namespace loong
 			}
 			if (a == 10)
 			{
-				if (std::fabs(e) < 9)
+				if (isnan(*this))
+				{
+					return "nan";
+				}
+				else if (std::fabs(e) < 9)
 				{
 					return std::to_string(lBI_to_int(*this));
 				}
@@ -259,7 +279,11 @@ namespace loong
 			}
 			if (a == 11)
 			{
-				if (std::fabs(e) < 9)
+				if (isnan(*this))
+				{
+					return "nan";
+				}
+				else if (std::fabs(e) < 9)
 				{
 					return std::to_string(lBI_to_int(*this));
 				}
@@ -388,7 +412,7 @@ namespace loong
 		}
 		lBI operator~()const
 		{
-			return - *this - 1;
+			return - *this - lBI({1, 0});
 		}
 		bool operator>(const lBI t)const
 		{
@@ -716,6 +740,14 @@ namespace loong
 			*this = t >> tmp;
 			return t >> tmp;
 		}
+		operator double()const
+		{
+        	return lBI_to_int(*this, 1);
+    	}
+		operator std::string()const
+		{
+        	return lBI_to_str(*this);
+    	}
 		lBI()
 		{
 			this->x = 0;
@@ -835,7 +867,7 @@ namespace loong
 		lBI tmp = {0, 0};
 		if (a.x == 0)
 		{
-			if (b <= 0)
+			if (b <= lBI({0, 0}))
 			{
 				throw std::invalid_argument("Natural number is invalid");
 			}
@@ -907,7 +939,7 @@ namespace loong
 	{
 		return a.to_int(no_error);
 	}
-	std::string lBI_to_str(lBI a, int b = 9)
+	std::string lBI_to_str(lBI a, int b)
 	{
 		return a.to_str(b);
 	}
