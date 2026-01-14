@@ -1,7 +1,7 @@
 # loong-big-integer
 （部分灵感来自于zlyxj的[breakinfinity.h](https://github.com/zlyxj/breakinfinity.h)）
 
-使用`loong::lBI`创建大整数变量，头文件下的所有函数均要包含`loong::`前缀。
+使用`loong::lBI`创建大整数变量，头文件下的所有函数（`Infinity`、`Nev_Infinity`、`True_Infinty`不需要）均要包含`loong::`前缀。
 
 这是一个大整数运算头文件，使用 C++ 编写，能表示不超过10^10^308的整数，并支持各种运算。
 支持的运算包括：基本四则运算、`pow`、n次方根、任意底的对数。
@@ -13,6 +13,8 @@
 
 更新记录
 ---
+2026.1.14 UPD：对输出及转字符串函数做较大改动。为修复一个bug，将运算符做了较大改动。
+
 2026.1.8 UPD：现在`loong::lBI`可以直接转成`double`和`std::string`类型了。
 
 2025.12.28 UPD：新增`loong::floor`和`loong::ceil`函数。
