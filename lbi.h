@@ -49,23 +49,55 @@ namespace loong
 		{
 			if (a == 0)
 			{
-				printf("%lfe%lg", x, e);
+				if (isnan(*this))
+				{
+					printf("nan");
+				}
+				else
+				{
+					printf("%lfe%lg", x, e);	
+				}
 			}
-			if (a == 1)
+			else if (a == 1)
 			{
-				printf("%lf %lg", x, e);
+				if (isnan(*this))
+				{
+					printf("nan");
+				}
+				else
+				{
+					printf("%lf %lg", x, e);
+				}
 			}
-			if (a == 2)
+			else if (a == 2)
 			{
-				printf("%lfx10^%lg", x, e);
+				if (isnan(*this))
+				{
+					printf("nan");
+				}
+				else
+				{
+					printf("%lfx10^%lg", x, e);
+				}
 			}
-			if (a == 3)
-			{
-				printf("%lf*10^%lg", x, e);
+			else if (a == 3)
+			{				
+				if (isnan(*this))
+				{
+					printf("nan");
+				}
+				else
+				{
+					printf("%lf*10^%lg", x, e);
+				}
 			}
-			if (a == 4)
+			else if (a == 4)
 			{
-				if (*this < lBI({0, 0}))
+				if (isnan(*this))
+				{
+					printf("nan");
+				}
+				else if (*this < lBI({0, 0}))
 				{
 					printf("-e%lg", log10(neg({x, e})).to_int());
 				}
@@ -78,45 +110,115 @@ namespace loong
 					printf("e%lg", log10({x, e}).to_int());
 				}
 			}
-			if (a == 5)
+			else if (a == 5)
 			{
-				printf("e%lg", e);
-			}
-			if (a == 6)
-			{
-				if (*this < lBI({0, 0}) && neg({x, e}) >= lBI({0, 0}))
+				if (isnan(*this))
 				{
-					printf("-ee%lg", log10(log10(neg({x, e}))).to_int());
+					printf("nan");
 				}
-				else if (*this == lBI({0, 0}) || log10(neg({x, e})) <= lBI({0, 0}))
+				else if (*this < lBI({0, 0}))
 				{
-					throw std::invalid_argument("Invalid input");
+					printf("-e%lg", e);
 				}
 				else
 				{
-					printf("ee%lg", log10(log10({x, e})).to_int());
+					printf("e%lg", e);
 				}
 			}
-			if (a == 7)
+			else if (a == 6)
 			{
-				if (*this < lBI({0, 0}) && neg({x, e}) >= lBI({0, 0}))
+				if (isnan(*this))
 				{
-					printf("-10^^%lg", log10(log10(neg({x, e}))).to_int());
+					printf("nan");
 				}
-				else if (*this == lBI({0, 0}) || log10(neg({x, e})) <= lBI({0, 0}))
+				else if (*this == lBI({0, 0}))
 				{
-					throw std::invalid_argument("Invalid input");
+					printf("e(-inf)");
+				}
+				else if (*this < lBI({0, 0}))
+				{
+					if (log10(neg({x, e})) > lBI({0, 0}))
+					{
+						printf("-ee%lg", log10(log10(neg({x, e}))).to_int());
+					}
+					else if (log10(neg({x, e})) == lBI({0, 0}))
+					{
+						printf("-ee(-inf)");
+					}
+					else
+					{
+						printf("-e(-e%lg)", log10(neg(log10(neg({x, e})))).to_int());
+					}
 				}
 				else
 				{
-					printf("10^^%lg", log10(log10({x, e})).to_int());
+					if (log10({x, e}) > lBI({0, 0}))
+					{
+						printf("ee%lg", log10(log10({x, e})).to_int());
+					}
+					else if (log10({x, e}) == lBI({0, 0}))
+					{
+						printf("ee(-inf)");
+					}
+					else
+					{
+						printf("e(-e%lg)", log10(neg(log10({x, e}))).to_int());
+					}
 				}
 			}
-			if (a == 8)
+			else if (a == 7)
 			{
-				printf("%lg", lBI_to_int(*this));
+				if (isnan(*this))
+				{
+					printf("nan");
+				}
+				else if (*this == lBI({0, 0}))
+				{
+					printf("10^(-inf)");
+				}
+				else if (*this < lBI({0, 0}))
+				{
+					if (log10(neg({x, e})) > lBI({0, 0}))
+					{
+						printf("-10^^%lg", log10(log10(neg({x, e}))).to_int());
+					}
+					else if (log10(neg({x, e})) == lBI({0, 0}))
+					{
+						printf("-10^^(-inf)");
+					}
+					else
+					{
+						printf("-10^(-10^%lg)", log10(neg(log10(neg({x, e})))).to_int());
+					}
+				}
+				else
+				{
+					if (log10({x, e}) > lBI({0, 0}))
+					{
+						printf("10^^%lg", log10(log10({x, e})).to_int());
+					}
+					else if (log10({x, e}) == lBI({0, 0}))
+					{
+						printf("10^^(-inf)");
+					}
+					else
+					{
+						printf("10^(-10^%lg)", log10(neg(log10({x, e}))).to_int());
+					}
+				}
 			}
-			if (a == 9)
+			else if (a == 8)
+			{
+				if (isnan(*this))
+				{
+					printf("nan");
+				}
+				else
+				{
+					printf("%lg", lBI_to_int(*this, 1));
+				}
+			}
+			else if (a == 9)
 			{
 				if (isnan(*this))
 				{
@@ -132,10 +234,17 @@ namespace loong
 				}
 				else 
 				{
-					printf("e%lg", log10({x, e}).to_int());
+					if (*this < lBI({0, 0}))
+					{
+						printf("-e%lg", log10(neg({x, e})).to_int());
+					}
+					else
+					{
+						printf("e%lg", log10({x, e}).to_int());
+					}
 				}
 			}			
-			if (a == 10)
+			else if (a == 10)
 			{
 				if (isnan(*this))
 				{
@@ -151,10 +260,17 @@ namespace loong
 				}
 				else 
 				{
-					printf("10^^%lg", log10({x, e}).to_int());
+					if (*this < lBI({0, 0}))
+					{
+						printf("-10^^%lg", log10(neg({x, e})).to_int());
+					}
+					else
+					{
+						printf("10^^%lg", log10({x, e}).to_int());
+					}
 				}
 			}			
-			if (a == 11)
+			else if (a == 11)
 			{
 				if (isnan(*this))
 				{
@@ -170,8 +286,19 @@ namespace loong
 				}
 				else 
 				{
-					printf("10^^%lg", log10({x, e}).to_int());
+					if (*this < lBI({0, 0}))
+					{
+						printf("-10^^%lg", log10(neg({x, e})).to_int());
+					}
+					else
+					{
+						printf("10^^%lg", log10({x, e}).to_int());
+					}
 				}
+			}
+			else
+			{
+				throw std::invalid_argument("Output mode is invalid");
 			}			
 			if (b)
 			{
@@ -183,63 +310,176 @@ namespace loong
 		{
 			if (a == 0)
 			{
-				return std::to_string(x) + "e" + std::to_string(e);
-			}
-			if (a == 1)
-			{
-				return std::to_string(x) + " " + std::to_string(e);
-			}
-			if (a == 2)
-			{
-				return std::to_string(x) + "x10^" + std::to_string(e);
-			}
-			if (a == 3)
-			{
-				return std::to_string(x) + "*10^" + std::to_string(e);
-			}
-			if (a == 4)
-			{
-				return "e" + std::to_string(log10({x, e}).to_int());
-			}
-			if (a == 5)
-			{
-				return "e" + std::to_string(e);
-			}
-			if (a == 6)
-			{
-				if (*this < lBI({0, 0}) && neg({x, e}) >= lBI({0, 0}))
+				if (isnan(*this))
 				{
-					return "-ee" + std::to_string(log10(log10(neg({x, e}))).to_int());
-				}
-				else if (*this == lBI({0, 0}) || log10(neg({x, e})) <= lBI({0, 0}))
-				{
-					throw std::invalid_argument("Invalid input");
+					return "nan";
 				}
 				else
 				{
-					return "ee" + std::to_string(log10(log10({x, e})).to_int());
+					return std::to_string(x) + "e" + std::to_string(e);
 				}
 			}
-			if (a == 7)
+			else if (a == 1)
 			{
-				if (*this < lBI({0, 0}) && neg({x, e}) >= lBI({0, 0}))
+				if (isnan(*this))
 				{
-					return "-10^^" + std::to_string(log10(log10(neg({x, e}))).to_int());
-				}
-				else if (*this == lBI({0, 0}) || log10(neg({x, e})) <= lBI({0, 0}))
-				{
-					throw std::invalid_argument("Invalid input");
+					return "nan";
 				}
 				else
 				{
-					return "10^^" + std::to_string(log10(log10({x, e})).to_int());
+					return std::to_string(x) + " " + std::to_string(e);
 				}
 			}
-			if (a == 8)
+			else if (a == 2)
 			{
-				return std::to_string(lBI_to_int(*this));
+				if (isnan(*this))
+				{
+					return "nan";
+				}
+				else
+				{
+					return std::to_string(x) + "x10^" + std::to_string(e);
+				}
 			}
-			if (a == 9)
+			else if (a == 3)
+			{
+				if (isnan(*this))
+				{
+					return "nan";
+				}	
+				else
+				{			
+					return std::to_string(x) + "*10^" + std::to_string(e);
+				}
+			}
+			else if (a == 4)
+			{
+				if (isnan(*this))
+				{
+					return "nan";
+				}
+				else if (*this < lBI({0, 0}))
+				{
+					return "-e" + std::to_string(log10(neg({x, e})).to_int());
+				}
+				else if (*this == lBI({0, 0}))
+				{
+					return "e(-inf)";
+				}
+				else
+				{
+					return "e" + std::to_string(log10({x, e}).to_int());
+				}
+			}
+			else if (a == 5)
+			{
+				if (isnan(*this))
+				{
+					return "nan";
+				}
+				else if (*this < lBI({0, 0}))
+				{
+					return "-e" + std::to_string(e);
+				}
+				else
+				{
+					return "e" + std::to_string(e);
+				}
+			}
+			else if (a == 6)
+			{
+				if (isnan(*this))
+				{
+					return "nan";
+				}
+				else if (*this == lBI({0, 0}))
+				{
+					return "e(-inf)";
+				}
+				else if (*this < lBI({0, 0}))
+				{
+					if (log10(neg({x, e})) > lBI({0, 0}))
+					{
+						return "-ee" + std::to_string(log10(log10(neg({x, e}))).to_int());
+					}
+					else if (log10(neg({x, e})) == lBI({0, 0}))
+					{
+						return "-ee(-inf)";
+					}
+					else
+					{
+						return "-e(-e" + std::to_string(log10(neg(log10(neg({x, e})))).to_int()) + ")";
+					}
+				}
+				else
+				{
+					if (log10({x, e}) > lBI({0, 0}))
+					{
+						return "ee" + std::to_string(log10(log10({x, e})).to_int());
+					}
+					else if (log10({x, e}) == lBI({0, 0}))
+					{
+						return "ee(-inf)";
+					}
+					else
+					{
+						return "e(-e" + std::to_string(log10(neg(log10({x, e}))).to_int()) + ")";
+					}
+				}
+			}
+			else if (a == 7)
+			{
+				if (isnan(*this))
+				{
+					return "nan";
+				}
+				else if (*this == lBI({0, 0}))
+				{
+					return "10^(-inf)";
+				}
+				else if (*this < lBI({0, 0}))
+				{
+					if (log10(neg({x, e})) > lBI({0, 0}))
+					{
+						return "-10^^" + std::to_string(log10(log10(neg({x, e}))).to_int());
+					}
+					else if (log10(neg({x, e})) == lBI({0, 0}))
+					{
+						return "-10^^(-inf)";
+					}
+					else
+					{
+						return "-10^(-10^" + std::to_string(log10(neg(log10(neg({x, e})))).to_int()) + ")";
+					}
+				}
+				else
+				{
+					if (log10({x, e}) > lBI({0, 0}))
+					{
+						return "10^^" + std::to_string(log10(log10({x, e})).to_int());
+					}
+					else if (log10({x, e}) == lBI({0, 0}))
+					{
+						return "10^^(-inf)";
+					}
+					else
+					{
+						return "10^(-10^" + std::to_string(log10(neg(log10({x, e}))).to_int()) + ")";
+					}
+				}
+			}
+			else if (a == 8)
+			{
+				if (isnan(*this))
+				{
+					return "nan";
+				}
+				else
+				{
+					return std::to_string(lBI_to_int(*this, 1));
+				}
+			}
+			else if (a == 9)
 			{
 				if (isnan(*this))
 				{
@@ -258,7 +498,7 @@ namespace loong
 					return "e" + std::to_string(log10({x, e}).to_int());
 				}
 			}
-			if (a == 10)
+			else if (a == 10)
 			{
 				if (isnan(*this))
 				{
@@ -277,7 +517,7 @@ namespace loong
 					return "10^^" + std::to_string(log10({x, e}).to_int());
 				}
 			}
-			if (a == 11)
+			else if (a == 11)
 			{
 				if (isnan(*this))
 				{
@@ -295,6 +535,10 @@ namespace loong
 				{
 					return "10^^" + std::to_string(log10({x, e}).to_int());
 				}
+			}
+			else
+			{
+				throw std::invalid_argument("Switch mode of string is invalid");
 			}
 		}
 		double to_int(bool no_error = 0)
@@ -964,6 +1208,490 @@ namespace loong
 			os << "e" << log10(p).to_int();
 		}
 	    return os; 
+	}
+	lBI operator+(lBI tmp1, int tmp2)
+	{
+		return tmp1 + lBI(tmp2);
+	}
+	lBI operator+(lBI tmp1, unsigned int tmp2)
+	{
+		return tmp1 + lBI(tmp2);
+	}
+	lBI operator+(lBI tmp1, long tmp2)
+	{
+		return tmp1 + lBI(tmp2);
+	}
+	lBI operator+(lBI tmp1, unsigned long tmp2)
+	{
+		return tmp1 + lBI(tmp2);
+	}
+	lBI operator+(lBI tmp1, long long tmp2)
+	{
+		return tmp1 + lBI(tmp2);
+	}
+	lBI operator+(lBI tmp1, unsigned long long tmp2)
+	{
+		return tmp1 + lBI(tmp2);
+	}	
+	lBI operator+(lBI tmp1, __int128 tmp2)
+	{
+		return tmp1 + lBI(tmp2);
+	}
+	lBI operator+(lBI tmp1, unsigned __int128 tmp2)
+	{
+		return tmp1 + lBI(tmp2);
+	}		
+	lBI operator+(lBI tmp1, float tmp2)
+	{
+		return tmp1 + lBI(tmp2);
+	}	
+	lBI operator+(lBI tmp1, double tmp2)
+	{
+		return tmp1 + lBI(tmp2);
+	}	
+	lBI operator+(lBI tmp1, long double tmp2)
+	{
+		return tmp1 + lBI(tmp2);
+	}	
+	lBI operator-(lBI tmp1, int tmp2)
+	{
+		return tmp1 - lBI(tmp2);
+	}
+	lBI operator-(lBI tmp1, unsigned int tmp2)
+	{
+		return tmp1 - lBI(tmp2);
+	}
+	lBI operator-(lBI tmp1, long tmp2)
+	{
+		return tmp1 - lBI(tmp2);
+	}
+	lBI operator-(lBI tmp1, unsigned long tmp2)
+	{
+		return tmp1 - lBI(tmp2);
+	}
+	lBI operator-(lBI tmp1, long long tmp2)
+	{
+		return tmp1 - lBI(tmp2);
+	}
+	lBI operator-(lBI tmp1, unsigned long long tmp2)
+	{
+		return tmp1 - lBI(tmp2);
+	}	
+	lBI operator-(lBI tmp1, __int128 tmp2)
+	{
+		return tmp1 - lBI(tmp2);
+	}
+	lBI operator-(lBI tmp1, unsigned __int128 tmp2)
+	{
+		return tmp1 - lBI(tmp2);
+	}		
+	lBI operator-(lBI tmp1, float tmp2)
+	{
+		return tmp1 - lBI(tmp2);
+	}	
+	lBI operator-(lBI tmp1, double tmp2)
+	{
+		return tmp1 - lBI(tmp2);
+	}	
+	lBI operator-(lBI tmp1, long double tmp2)
+	{
+		return tmp1 - lBI(tmp2);
+	}	
+	lBI operator*(lBI tmp1, int tmp2)
+	{
+		return tmp1 * lBI(tmp2);
+	}
+	lBI operator*(lBI tmp1, unsigned int tmp2)
+	{
+		return tmp1 * lBI(tmp2);
+	}
+	lBI operator*(lBI tmp1, long tmp2)
+	{
+		return tmp1 * lBI(tmp2);
+	}
+	lBI operator*(lBI tmp1, unsigned long tmp2)
+	{
+		return tmp1 * lBI(tmp2);
+	}
+	lBI operator*(lBI tmp1, long long tmp2)
+	{
+		return tmp1 * lBI(tmp2);
+	}
+	lBI operator*(lBI tmp1, unsigned long long tmp2)
+	{
+		return tmp1 * lBI(tmp2);
+	}	
+	lBI operator*(lBI tmp1, __int128 tmp2)
+	{
+		return tmp1 * lBI(tmp2);
+	}
+	lBI operator*(lBI tmp1, unsigned __int128 tmp2)
+	{
+		return tmp1 * lBI(tmp2);
+	}		
+	lBI operator*(lBI tmp1, float tmp2)
+	{
+		return tmp1 * lBI(tmp2);
+	}	
+	lBI operator*(lBI tmp1, double tmp2)
+	{
+		return tmp1 * lBI(tmp2);
+	}	
+	lBI operator*(lBI tmp1, long double tmp2)
+	{
+		return tmp1 * lBI(tmp2);
+	}	
+	lBI operator/(lBI tmp1, int tmp2)
+	{
+		return tmp1 / lBI(tmp2);
+	}
+	lBI operator/(lBI tmp1, unsigned int tmp2)
+	{
+		return tmp1 / lBI(tmp2);
+	}
+	lBI operator/(lBI tmp1, long tmp2)
+	{
+		return tmp1 / lBI(tmp2);
+	}
+	lBI operator/(lBI tmp1, unsigned long tmp2)
+	{
+		return tmp1 / lBI(tmp2);
+	}
+	lBI operator/(lBI tmp1, long long tmp2)
+	{
+		return tmp1 / lBI(tmp2);
+	}
+	lBI operator/(lBI tmp1, unsigned long long tmp2)
+	{
+		return tmp1 / lBI(tmp2);
+	}	
+	lBI operator/(lBI tmp1, __int128 tmp2)
+	{
+		return tmp1 / lBI(tmp2);
+	}
+	lBI operator/(lBI tmp1, unsigned __int128 tmp2)
+	{
+		return tmp1 / lBI(tmp2);
+	}		
+	lBI operator/(lBI tmp1, float tmp2)
+	{
+		return tmp1 / lBI(tmp2);
+	}	
+	lBI operator/(lBI tmp1, double tmp2)
+	{
+		return tmp1 / lBI(tmp2);
+	}	
+	lBI operator/(lBI tmp1, long double tmp2)
+	{
+		return tmp1 / lBI(tmp2);
+	}	
+	lBI operator%(lBI tmp1, int tmp2)
+	{
+		return tmp1 % lBI(tmp2);
+	}
+	lBI operator%(lBI tmp1, unsigned int tmp2)
+	{
+		return tmp1 % lBI(tmp2);
+	}
+	lBI operator%(lBI tmp1, long tmp2)
+	{
+		return tmp1 % lBI(tmp2);
+	}
+	lBI operator%(lBI tmp1, unsigned long tmp2)
+	{
+		return tmp1 % lBI(tmp2);
+	}
+	lBI operator%(lBI tmp1, long long tmp2)
+	{
+		return tmp1 % lBI(tmp2);
+	}
+	lBI operator%(lBI tmp1, unsigned long long tmp2)
+	{
+		return tmp1 % lBI(tmp2);
+	}	
+	lBI operator%(lBI tmp1, __int128 tmp2)
+	{
+		return tmp1 % lBI(tmp2);
+	}
+	lBI operator%(lBI tmp1, unsigned __int128 tmp2)
+	{
+		return tmp1 % lBI(tmp2);
+	}		
+	lBI operator%(lBI tmp1, float tmp2)
+	{
+		return tmp1 % lBI(tmp2);
+	}	
+	lBI operator%(lBI tmp1, double tmp2)
+	{
+		return tmp1 % lBI(tmp2);
+	}	
+	lBI operator%(lBI tmp1, long double tmp2)
+	{
+		return tmp1 % lBI(tmp2);
+	}	
+	bool operator>(lBI tmp1, int tmp2)
+	{
+		return tmp1 > lBI(tmp2);
+	}
+	bool operator>(lBI tmp1, unsigned int tmp2)
+	{
+		return tmp1 > lBI(tmp2);
+	}
+	bool operator>(lBI tmp1, long tmp2)
+	{
+		return tmp1 > lBI(tmp2);
+	}
+	bool operator>(lBI tmp1, unsigned long tmp2)
+	{
+		return tmp1 > lBI(tmp2);
+	}
+	bool operator>(lBI tmp1, long long tmp2)
+	{
+		return tmp1 > lBI(tmp2);
+	}
+	bool operator>(lBI tmp1, unsigned long long tmp2)
+	{
+		return tmp1 > lBI(tmp2);
+	}	
+	bool operator>(lBI tmp1, __int128 tmp2)
+	{
+		return tmp1 > lBI(tmp2);
+	}
+	bool operator>(lBI tmp1, unsigned __int128 tmp2)
+	{
+		return tmp1 > lBI(tmp2);
+	}		
+	bool operator>(lBI tmp1, float tmp2)
+	{
+		return tmp1 > lBI(tmp2);
+	}	
+	bool operator>(lBI tmp1, double tmp2)
+	{
+		return tmp1 > lBI(tmp2);
+	}	
+	bool operator>(lBI tmp1, long double tmp2)
+	{
+		return tmp1 > lBI(tmp2);
+	}	
+	bool operator>=(lBI tmp1, int tmp2)
+	{
+		return tmp1 >= lBI(tmp2);
+	}
+	bool operator>=(lBI tmp1, unsigned int tmp2)
+	{
+		return tmp1 >= lBI(tmp2);
+	}
+	bool operator>=(lBI tmp1, long tmp2)
+	{
+		return tmp1 >= lBI(tmp2);
+	}
+	bool operator>=(lBI tmp1, unsigned long tmp2)
+	{
+		return tmp1 >= lBI(tmp2);
+	}
+	bool operator>=(lBI tmp1, long long tmp2)
+	{
+		return tmp1 >= lBI(tmp2);
+	}
+	bool operator>=(lBI tmp1, unsigned long long tmp2)
+	{
+		return tmp1 >= lBI(tmp2);
+	}	
+	bool operator>=(lBI tmp1, __int128 tmp2)
+	{
+		return tmp1 >= lBI(tmp2);
+	}
+	bool operator>=(lBI tmp1, unsigned __int128 tmp2)
+	{
+		return tmp1 >= lBI(tmp2);
+	}		
+	bool operator>=(lBI tmp1, float tmp2)
+	{
+		return tmp1 >= lBI(tmp2);
+	}	
+	bool operator>=(lBI tmp1, double tmp2)
+	{
+		return tmp1 >= lBI(tmp2);
+	}	
+	bool operator>=(lBI tmp1, long double tmp2)
+	{
+		return tmp1 >= lBI(tmp2);
+	}	
+	bool operator<(lBI tmp1, int tmp2)
+	{
+		return tmp1 < lBI(tmp2);
+	}
+	bool operator<(lBI tmp1, unsigned int tmp2)
+	{
+		return tmp1 < lBI(tmp2);
+	}
+	bool operator<(lBI tmp1, long tmp2)
+	{
+		return tmp1 < lBI(tmp2);
+	}
+	bool operator<(lBI tmp1, unsigned long tmp2)
+	{
+		return tmp1 < lBI(tmp2);
+	}
+	bool operator<(lBI tmp1, long long tmp2)
+	{
+		return tmp1 < lBI(tmp2);
+	}
+	bool operator<(lBI tmp1, unsigned long long tmp2)
+	{
+		return tmp1 < lBI(tmp2);
+	}	
+	bool operator<(lBI tmp1, __int128 tmp2)
+	{
+		return tmp1 < lBI(tmp2);
+	}
+	bool operator<(lBI tmp1, unsigned __int128 tmp2)
+	{
+		return tmp1 < lBI(tmp2);
+	}		
+	bool operator<(lBI tmp1, float tmp2)
+	{
+		return tmp1 < lBI(tmp2);
+	}	
+	bool operator<(lBI tmp1, double tmp2)
+	{
+		return tmp1 < lBI(tmp2);
+	}	
+	bool operator<(lBI tmp1, long double tmp2)
+	{
+		return tmp1 < lBI(tmp2);
+	}	
+	bool operator<=(lBI tmp1, int tmp2)
+	{
+		return tmp1 <= lBI(tmp2);
+	}
+	bool operator<=(lBI tmp1, unsigned int tmp2)
+	{
+		return tmp1 <= lBI(tmp2);
+	}
+	bool operator<=(lBI tmp1, long tmp2)
+	{
+		return tmp1 <= lBI(tmp2);
+	}
+	bool operator<=(lBI tmp1, unsigned long tmp2)
+	{
+		return tmp1 <= lBI(tmp2);
+	}
+	bool operator<=(lBI tmp1, long long tmp2)
+	{
+		return tmp1 <= lBI(tmp2);
+	}
+	bool operator<=(lBI tmp1, unsigned long long tmp2)
+	{
+		return tmp1 <= lBI(tmp2);
+	}	
+	bool operator<=(lBI tmp1, __int128 tmp2)
+	{
+		return tmp1 <= lBI(tmp2);
+	}
+	bool operator<=(lBI tmp1, unsigned __int128 tmp2)
+	{
+		return tmp1 <= lBI(tmp2);
+	}		
+	bool operator<=(lBI tmp1, float tmp2)
+	{
+		return tmp1 <= lBI(tmp2);
+	}	
+	bool operator<=(lBI tmp1, double tmp2)
+	{
+		return tmp1 <= lBI(tmp2);
+	}	
+	bool operator<=(lBI tmp1, long double tmp2)
+	{
+		return tmp1 <= lBI(tmp2);
+	}	
+	bool operator==(lBI tmp1, int tmp2)
+	{
+		return tmp1 == lBI(tmp2);
+	}
+	bool operator==(lBI tmp1, unsigned int tmp2)
+	{
+		return tmp1 == lBI(tmp2);
+	}
+	bool operator==(lBI tmp1, long tmp2)
+	{
+		return tmp1 == lBI(tmp2);
+	}
+	bool operator==(lBI tmp1, unsigned long tmp2)
+	{
+		return tmp1 == lBI(tmp2);
+	}
+	bool operator==(lBI tmp1, long long tmp2)
+	{
+		return tmp1 == lBI(tmp2);
+	}
+	bool operator==(lBI tmp1, unsigned long long tmp2)
+	{
+		return tmp1 == lBI(tmp2);
+	}	
+	bool operator==(lBI tmp1, __int128 tmp2)
+	{
+		return tmp1 == lBI(tmp2);
+	}
+	bool operator==(lBI tmp1, unsigned __int128 tmp2)
+	{
+		return tmp1 == lBI(tmp2);
+	}		
+	bool operator==(lBI tmp1, float tmp2)
+	{
+		return tmp1 == lBI(tmp2);
+	}	
+	bool operator==(lBI tmp1, double tmp2)
+	{
+		return tmp1 == lBI(tmp2);
+	}	
+	bool operator==(lBI tmp1, long double tmp2)
+	{
+		return tmp1 == lBI(tmp2);
+	}	
+	bool operator!=(lBI tmp1, int tmp2)
+	{
+		return tmp1 != lBI(tmp2);
+	}
+	bool operator!=(lBI tmp1, unsigned int tmp2)
+	{
+		return tmp1 != lBI(tmp2);
+	}
+	bool operator!=(lBI tmp1, long tmp2)
+	{
+		return tmp1 != lBI(tmp2);
+	}
+	bool operator!=(lBI tmp1, unsigned long tmp2)
+	{
+		return tmp1 != lBI(tmp2);
+	}
+	bool operator!=(lBI tmp1, long long tmp2)
+	{
+		return tmp1 != lBI(tmp2);
+	}
+	bool operator!=(lBI tmp1, unsigned long long tmp2)
+	{
+		return tmp1 != lBI(tmp2);
+	}	
+	bool operator!=(lBI tmp1, __int128 tmp2)
+	{
+		return tmp1 != lBI(tmp2);
+	}
+	bool operator!=(lBI tmp1, unsigned __int128 tmp2)
+	{
+		return tmp1 != lBI(tmp2);
+	}		
+	bool operator!=(lBI tmp1, float tmp2)
+	{
+		return tmp1 != lBI(tmp2);
+	}	
+	bool operator!=(lBI tmp1, double tmp2)
+	{
+		return tmp1 != lBI(tmp2);
+	}	
+	bool operator!=(lBI tmp1, long double tmp2)
+	{
+		return tmp1 != lBI(tmp2);
 	}
 }
 #endif
