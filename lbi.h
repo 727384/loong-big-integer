@@ -24,6 +24,7 @@ namespace loong
 	lBI log10(lBI a);
 	lBI logx(lBI a, lBI b);
 	lBI pow(lBI a, lBI b, bool no_error = 1);
+	lBI pow_no_error(lBI a, lBI b);
 	lBI sqrtx(lBI a, lBI b);
 	lBI sqrt(lBI a);
 	lBI abs(lBI a);
@@ -33,6 +34,7 @@ namespace loong
 	lBI lBI_format(lBI a);
 	lBI print_lBI(lBI a, int b, bool c);
 	double lBI_to_int(lBI a, bool no_error = 0);
+	double lBI_to_int_no_error(lBI a);
 	std::string lBI_to_str(lBI a, int b = 9);
 	std::istream& operator>>(std::istream& is, lBI& p);
 	std::ostream& operator<<(std::ostream& os, const lBI& p);
@@ -133,7 +135,7 @@ namespace loong
 				}
 				else if (*this == lBI({0, 0}))
 				{
-					printf("e(-inf)");
+					printf("e(-e(inf))");
 				}
 				else if (*this < lBI({0, 0}))
 				{
@@ -174,7 +176,7 @@ namespace loong
 				}
 				else if (*this == lBI({0, 0}))
 				{
-					printf("10^(-inf)");
+					printf("10^(-10^(inf))");
 				}
 				else if (*this < lBI({0, 0}))
 				{
@@ -394,7 +396,7 @@ namespace loong
 				}
 				else if (*this == lBI({0, 0}))
 				{
-					return "e(-inf)";
+					return "e(-e(inf))";
 				}
 				else if (*this < lBI({0, 0}))
 				{
@@ -435,7 +437,7 @@ namespace loong
 				}
 				else if (*this == lBI({0, 0}))
 				{
-					return "10^(-inf)";
+					return "10^(-10^(inf))";
 				}
 				else if (*this < lBI({0, 0}))
 				{
@@ -1135,6 +1137,10 @@ namespace loong
 		}
 		return tmp;
 	}
+	lBI pow_no_error(lBI a, lBI b)
+	{
+		return pow(a, b, 1);
+	}
 	lBI sqrtx(lBI a, lBI b = {2, 0})
 	{
 		lBI tmp = pow(a, lBI({1, 0}) / b, 0);
@@ -1182,6 +1188,10 @@ namespace loong
 	double lBI_to_int(lBI a, bool no_error)
 	{
 		return a.to_int(no_error);
+	}
+	double lBI_to_int_no_error(lBI a)
+	{
+		return a.to_int(1);
 	}
 	std::string lBI_to_str(lBI a, int b)
 	{
