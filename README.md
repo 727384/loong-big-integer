@@ -13,6 +13,8 @@
 
 更新记录
 ---
+2026.1.17 UPD：增加了`loong::pow_no_error`、`loong::lBI_to_int_no_error`函数。对输出格式进行了小改动。
+
 2026.1.14 UPD：对输出及转字符串函数做较大改动。为修复一个bug，将运算符做了较大改动。
 
 2026.1.8 UPD：现在`loong::lBI`可以直接转成`double`和`std::string`类型了。
