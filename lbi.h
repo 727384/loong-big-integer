@@ -1242,14 +1242,6 @@ namespace loong
 	lBI operator+(lBI tmp1, unsigned long long tmp2)
 	{
 		return tmp1 + lBI(tmp2);
-	}	
-	lBI operator+(lBI tmp1, __int128 tmp2)
-	{
-		return tmp1 + lBI(tmp2);
-	}
-	lBI operator+(lBI tmp1, unsigned __int128 tmp2)
-	{
-		return tmp1 + lBI(tmp2);
 	}		
 	lBI operator+(lBI tmp1, float tmp2)
 	{
@@ -1287,14 +1279,6 @@ namespace loong
 	{
 		return tmp1 - lBI(tmp2);
 	}	
-	lBI operator-(lBI tmp1, __int128 tmp2)
-	{
-		return tmp1 - lBI(tmp2);
-	}
-	lBI operator-(lBI tmp1, unsigned __int128 tmp2)
-	{
-		return tmp1 - lBI(tmp2);
-	}		
 	lBI operator-(lBI tmp1, float tmp2)
 	{
 		return tmp1 - lBI(tmp2);
@@ -1331,14 +1315,6 @@ namespace loong
 	{
 		return tmp1 * lBI(tmp2);
 	}	
-	lBI operator*(lBI tmp1, __int128 tmp2)
-	{
-		return tmp1 * lBI(tmp2);
-	}
-	lBI operator*(lBI tmp1, unsigned __int128 tmp2)
-	{
-		return tmp1 * lBI(tmp2);
-	}		
 	lBI operator*(lBI tmp1, float tmp2)
 	{
 		return tmp1 * lBI(tmp2);
@@ -1375,14 +1351,6 @@ namespace loong
 	{
 		return tmp1 / lBI(tmp2);
 	}	
-	lBI operator/(lBI tmp1, __int128 tmp2)
-	{
-		return tmp1 / lBI(tmp2);
-	}
-	lBI operator/(lBI tmp1, unsigned __int128 tmp2)
-	{
-		return tmp1 / lBI(tmp2);
-	}		
 	lBI operator/(lBI tmp1, float tmp2)
 	{
 		return tmp1 / lBI(tmp2);
@@ -1419,14 +1387,6 @@ namespace loong
 	{
 		return tmp1 % lBI(tmp2);
 	}	
-	lBI operator%(lBI tmp1, __int128 tmp2)
-	{
-		return tmp1 % lBI(tmp2);
-	}
-	lBI operator%(lBI tmp1, unsigned __int128 tmp2)
-	{
-		return tmp1 % lBI(tmp2);
-	}		
 	lBI operator%(lBI tmp1, float tmp2)
 	{
 		return tmp1 % lBI(tmp2);
@@ -1462,15 +1422,7 @@ namespace loong
 	bool operator>(lBI tmp1, unsigned long long tmp2)
 	{
 		return tmp1 > lBI(tmp2);
-	}	
-	bool operator>(lBI tmp1, __int128 tmp2)
-	{
-		return tmp1 > lBI(tmp2);
 	}
-	bool operator>(lBI tmp1, unsigned __int128 tmp2)
-	{
-		return tmp1 > lBI(tmp2);
-	}		
 	bool operator>(lBI tmp1, float tmp2)
 	{
 		return tmp1 > lBI(tmp2);
@@ -1507,14 +1459,6 @@ namespace loong
 	{
 		return tmp1 >= lBI(tmp2);
 	}	
-	bool operator>=(lBI tmp1, __int128 tmp2)
-	{
-		return tmp1 >= lBI(tmp2);
-	}
-	bool operator>=(lBI tmp1, unsigned __int128 tmp2)
-	{
-		return tmp1 >= lBI(tmp2);
-	}		
 	bool operator>=(lBI tmp1, float tmp2)
 	{
 		return tmp1 >= lBI(tmp2);
@@ -1550,15 +1494,7 @@ namespace loong
 	bool operator<(lBI tmp1, unsigned long long tmp2)
 	{
 		return tmp1 < lBI(tmp2);
-	}	
-	bool operator<(lBI tmp1, __int128 tmp2)
-	{
-		return tmp1 < lBI(tmp2);
 	}
-	bool operator<(lBI tmp1, unsigned __int128 tmp2)
-	{
-		return tmp1 < lBI(tmp2);
-	}		
 	bool operator<(lBI tmp1, float tmp2)
 	{
 		return tmp1 < lBI(tmp2);
@@ -1594,15 +1530,7 @@ namespace loong
 	bool operator<=(lBI tmp1, unsigned long long tmp2)
 	{
 		return tmp1 <= lBI(tmp2);
-	}	
-	bool operator<=(lBI tmp1, __int128 tmp2)
-	{
-		return tmp1 <= lBI(tmp2);
 	}
-	bool operator<=(lBI tmp1, unsigned __int128 tmp2)
-	{
-		return tmp1 <= lBI(tmp2);
-	}		
 	bool operator<=(lBI tmp1, float tmp2)
 	{
 		return tmp1 <= lBI(tmp2);
@@ -1638,15 +1566,7 @@ namespace loong
 	bool operator==(lBI tmp1, unsigned long long tmp2)
 	{
 		return tmp1 == lBI(tmp2);
-	}	
-	bool operator==(lBI tmp1, __int128 tmp2)
-	{
-		return tmp1 == lBI(tmp2);
 	}
-	bool operator==(lBI tmp1, unsigned __int128 tmp2)
-	{
-		return tmp1 == lBI(tmp2);
-	}		
 	bool operator==(lBI tmp1, float tmp2)
 	{
 		return tmp1 == lBI(tmp2);
@@ -1682,14 +1602,6 @@ namespace loong
 	bool operator!=(lBI tmp1, unsigned long long tmp2)
 	{
 		return tmp1 != lBI(tmp2);
-	}	
-	bool operator!=(lBI tmp1, __int128 tmp2)
-	{
-		return tmp1 != lBI(tmp2);
-	}
-	bool operator!=(lBI tmp1, unsigned __int128 tmp2)
-	{
-		return tmp1 != lBI(tmp2);
 	}		
 	bool operator!=(lBI tmp1, float tmp2)
 	{
@@ -1705,3 +1617,4 @@ namespace loong
 	}
 }
 #endif
+
