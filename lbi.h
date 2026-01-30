@@ -5,9 +5,9 @@
 #include <cmath>
 #include <string>
 #include <stdexcept>
-#define Infinity loong::pow(loong::lBI({2, 0}), loong::lBI({1.024, 3}))
-#define Nev_Infinity loong::neg(loong::pow(loong::lBI({2, 0}), loong::lBI({1.024, 3})))
-#define True_Infinity int_to_lBI(pow(2, 1024))
+#define lBI_Infinity loong::pow(loong::lBI({2, 0}), loong::lBI({1.024, 3}))
+#define lBI_Nev_Infinity loong::neg(loong::pow(loong::lBI({2, 0}), loong::lBI({1.024, 3})))
+#define lBI_True_Infinity int_to_lBI(pow(2, 1024))
 namespace loong
 {
 	struct lBI;
@@ -35,7 +35,8 @@ namespace loong
 	lBI print_lBI(lBI a, int b, bool c);
 	double lBI_to_int(lBI a, bool no_error = 0);
 	double lBI_to_int_no_error(lBI a);
-	std::string lBI_to_str(lBI a, int b = 9);
+	std::string lBI_to_str_old(lBI a, int b = 9);
+    std::string lBI_to_str(lBI a, int b = 9);
 	std::istream& operator>>(std::istream& is, lBI& p);
 	std::ostream& operator<<(std::ostream& os, const lBI& p);
 	struct lBI
@@ -308,7 +309,7 @@ namespace loong
 			}
 			return {x, e};
 		}
-		std::string to_str(int a = 9)
+		std::string to_str_old(int a = 9)
 		{
 			if (a == 0)
 			{
@@ -543,9 +544,268 @@ namespace loong
 				throw std::invalid_argument("Switch mode of string is invalid");
 			}
 		}
+        std::string to_str(int a = 9)
+		{
+            char buff[1024];
+			if (a == 0)
+			{
+				if (isnan(*this))
+				{
+					sprintf(buff, "nan");
+				}
+				else
+				{
+					sprintf(buff, "%lfe%lg", x, e);	
+				}
+			}
+			else if (a == 1)
+			{
+				if (isnan(*this))
+				{
+					sprintf(buff, "nan");
+				}
+				else
+				{
+					sprintf(buff, "%lf %lg", x, e);
+				}
+			}
+			else if (a == 2)
+			{
+				if (isnan(*this))
+				{
+					sprintf(buff, "nan");
+				}
+				else
+				{
+					sprintf(buff, "%lfx10^%lg", x, e);
+				}
+			}
+			else if (a == 3)
+			{				
+				if (isnan(*this))
+				{
+					sprintf(buff, "nan");
+				}
+				else
+				{
+					sprintf(buff, "%lf*10^%lg", x, e);
+				}
+			}
+			else if (a == 4)
+			{
+				if (isnan(*this))
+				{
+					sprintf(buff, "nan");
+				}
+				else if (*this < lBI({0, 0}))
+				{
+					sprintf(buff, "-e%lg", log10(neg({x, e})).to_int());
+				}
+				else if (*this == lBI({0, 0}))
+				{
+					sprintf(buff, "e(-inf)");
+				}
+				else
+				{
+					sprintf(buff, "e%lg", log10({x, e}).to_int());
+				}
+			}
+			else if (a == 5)
+			{
+				if (isnan(*this))
+				{
+					sprintf(buff, "nan");
+				}
+				else if (*this < lBI({0, 0}))
+				{
+					sprintf(buff, "-e%lg", e);
+				}
+				else
+				{
+					sprintf(buff, "e%lg", e);
+				}
+			}
+			else if (a == 6)
+			{
+				if (isnan(*this))
+				{
+					sprintf(buff, "nan");
+				}
+				else if (*this == lBI({0, 0}))
+				{
+					sprintf(buff, "e(-e(inf))");
+				}
+				else if (*this < lBI({0, 0}))
+				{
+					if (log10(neg({x, e})) > lBI({0, 0}))
+					{
+						sprintf(buff, "-ee%lg", log10(log10(neg({x, e}))).to_int());
+					}
+					else if (log10(neg({x, e})) == lBI({0, 0}))
+					{
+						sprintf(buff, "-ee(-inf)");
+					}
+					else
+					{
+						sprintf(buff, "-e(-e%lg)", log10(neg(log10(neg({x, e})))).to_int());
+					}
+				}
+				else
+				{
+					if (log10({x, e}) > lBI({0, 0}))
+					{
+						sprintf(buff, "ee%lg", log10(log10({x, e})).to_int());
+					}
+					else if (log10({x, e}) == lBI({0, 0}))
+					{
+						sprintf(buff, "ee(-inf)");
+					}
+					else
+					{
+						sprintf(buff, "e(-e%lg)", log10(neg(log10({x, e}))).to_int());
+					}
+				}
+			}
+			else if (a == 7)
+			{
+				if (isnan(*this))
+				{
+					sprintf(buff, "nan");
+				}
+				else if (*this == lBI({0, 0}))
+				{
+					sprintf(buff, "10^(-10^(inf))");
+				}
+				else if (*this < lBI({0, 0}))
+				{
+					if (log10(neg({x, e})) > lBI({0, 0}))
+					{
+						sprintf(buff, "-10^^%lg", log10(log10(neg({x, e}))).to_int());
+					}
+					else if (log10(neg({x, e})) == lBI({0, 0}))
+					{
+						sprintf(buff, "-10^^(-inf)");
+					}
+					else
+					{
+						sprintf(buff, "-10^(-10^%lg)", log10(neg(log10(neg({x, e})))).to_int());
+					}
+				}
+				else
+				{
+					if (log10({x, e}) > lBI({0, 0}))
+					{
+						sprintf(buff, "10^^%lg", log10(log10({x, e})).to_int());
+					}
+					else if (log10({x, e}) == lBI({0, 0}))
+					{
+						sprintf(buff, "10^^(-inf)");
+					}
+					else
+					{
+						sprintf(buff, "10^(-10^%lg)", log10(neg(log10({x, e}))).to_int());
+					}
+				}
+			}
+			else if (a == 8)
+			{
+				if (isnan(*this))
+				{
+					sprintf(buff, "nan");
+				}
+				else
+				{
+					sprintf(buff, "%lg", lBI_to_int(*this, 1));
+				}
+			}
+			else if (a == 9)
+			{
+				if (isnan(*this))
+				{
+					sprintf(buff, "nan");
+				}
+				else if (std::fabs(e) < 9)
+				{
+					sprintf(buff, "%lg", lBI_to_int(*this));
+				}
+				else if (std::fabs(e) < 1e9)
+				{
+					sprintf(buff, "%lfe%lg", x, e);
+				}
+				else 
+				{
+					if (*this < lBI({0, 0}))
+					{
+						sprintf(buff, "-e%lg", log10(neg({x, e})).to_int());
+					}
+					else
+					{
+						sprintf(buff, "e%lg", log10({x, e}).to_int());
+					}
+				}
+			}			
+			else if (a == 10)
+			{
+				if (isnan(*this))
+				{
+					sprintf(buff, "nan");
+				}
+				else if (std::fabs(e) < 9)
+				{
+					sprintf(buff, "%lg", lBI_to_int(*this));
+				}
+				else if (std::fabs(e) < 1e9)
+				{
+					sprintf(buff, "%lf*10^%lg", x, e);
+				}
+				else 
+				{
+					if (*this < lBI({0, 0}))
+					{
+						sprintf(buff, "-10^^%lg", log10(neg({x, e})).to_int());
+					}
+					else
+					{
+						sprintf(buff, "10^^%lg", log10({x, e}).to_int());
+					}
+				}
+			}			
+			else if (a == 11)
+			{
+				if (isnan(*this))
+				{
+					sprintf(buff, "nan");
+				}
+				else if (std::fabs(e) < 9)
+				{
+					sprintf(buff, "%lg", lBI_to_int(*this));
+				}
+				else if (std::fabs(e) < 1e9)
+				{
+					sprintf(buff, "%lfx10^%lg", x, e);
+				}
+				else 
+				{
+					if (*this < lBI({0, 0}))
+					{
+						sprintf(buff, "-10^^%lg", log10(neg({x, e})).to_int());
+					}
+					else
+					{
+						sprintf(buff, "10^^%lg", log10({x, e}).to_int());
+					}
+				}
+			}
+			else
+			{
+				throw std::invalid_argument("Output mode is invalid");
+			}
+            std::string ans = buff;
+			return ans;
+		}
 		double to_int(bool no_error = 0)
 		{
-			if (std::isnan(x * std::pow(10, e)) && !no_error && Nev_Infinity < *this && *this < Infinity)
+			if (std::isnan(x * std::pow(10, e)) && !no_error && lBI_Nev_Infinity < *this && *this < lBI_Infinity)
 			{
 				throw std::out_of_range("Number is out of -2^1024 ~ 2^1024");
 			}
@@ -1193,10 +1453,14 @@ namespace loong
 	{
 		return a.to_int(1);
 	}
-	std::string lBI_to_str(lBI a, int b)
+	std::string lBI_to_str_old(lBI a, int b)
 	{
-		return a.to_str(b);
+		return a.to_str_old(b);
 	}
+    std::string lBI_to_str(lBI a, int b)
+    {
+        return a.to_str(b);
+    }
 	std::istream& operator>>(std::istream& is, lBI& p) 
 	{
 	    is >> p.x >> p.e;
@@ -1617,4 +1881,3 @@ namespace loong
 	}
 }
 #endif
-
