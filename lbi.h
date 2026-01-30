@@ -7,7 +7,8 @@
 #include <stdexcept>
 #define lBI_Infinity loong::pow(loong::lBI({2, 0}), loong::lBI({1.024, 3}))
 #define lBI_Nev_Infinity loong::neg(loong::pow(loong::lBI({2, 0}), loong::lBI({1.024, 3})))
-#define lBI_True_Infinity int_to_lBI(pow(2, 1024))
+#define lBI_True_Infinity loong::int_to_lBI(pow(2, 1024))
+#define lBI_NAN loong::int_to_lBI(NAN)
 namespace loong
 {
 	struct lBI;
@@ -1881,3 +1882,4 @@ namespace loong
 	}
 }
 #endif
+
