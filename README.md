@@ -3,7 +3,7 @@
 
 这是一个大整数运算头文件，使用 C++ 编写，能表示不超过10^10^308的整数，并支持各种运算。
 
-使用`loong::lBI`创建大整数变量。头文件下的所有功能均要包含`loong::`前缀。（`lBI_Infinity`、`lBI_Nev_Infinity`、`lBI_True_Infinity`、`lBI_NAN`不需要）
+使用`loong::lBI`创建大整数变量。头文件下的所有功能均要包含`loong::`前缀。（`lBI_Infinity`、`lBI_Nev_Infinity`、`lBI_True_Infinity`、`lBI_Nev_True_Infinity`、`lBI_NAN`不需要）
 
 支持的运算包括：基本四则运算、`pow`、n次方根、任意底的对数，比较运算也适用。
 
@@ -13,7 +13,9 @@
 
 更新记录
 ---
-2026.1.30 UPD：重构`to_str()`成员函数及`lBI_to_str()`函数，原函数仍保留（加`_old`后缀）。把`*_Infinity`改为了`lBI_*_Infinity`。新增`lBI_NAN`。
+2026.2.3 UPD：移除了除法和`loong::lBI_to_int()`函数的报错。重构除法和`loong::lBI_to_int()`函数。添加了`loong::log10_no_error()`和`loong::logx_no_error()`函数。新增`lBI_Nev_True_Infinity`。
+
+2026.1.30 UPD：重构`to_str()`成员函数及`loong::lBI_to_str()`函数，原函数仍保留（加`_old`后缀）。把`*_Infinity`改为了`lBI_*_Infinity`。新增`lBI_NAN`。
 
 2026.1.26 UPD：移除了对`__int128`的支持。
 
