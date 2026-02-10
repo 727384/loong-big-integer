@@ -13,6 +13,8 @@
 
 更新记录
 ---
+2026.2.10 UPD：除模运算外，移除了所有函数的报错。对对数运算、幂运算和n次方根运算进行重构。修复了一个bug。
+
 2026.2.3 UPD：移除了除法和`loong::lBI_to_int()`函数的报错。重构除法和`loong::lBI_to_int()`函数。添加了`loong::log10_no_error()`和`loong::logx_no_error()`函数。新增`lBI_Nev_True_Infinity`。
 
 2026.1.30 UPD：重构`to_str()`成员函数及`loong::lBI_to_str()`函数，原函数仍保留（加`_old`后缀）。把`*_Infinity`改为了`lBI_*_Infinity`。新增`lBI_NAN`。
