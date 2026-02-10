@@ -22,12 +22,9 @@ namespace loong
 	lBI mod_no_error(lBI a, lBI b);
 	lBI floor(lBI a);
 	lBI ceil(lBI a);
-	lBI log10(lBI a, bool no_error = 1);
-	lBI log10_no_error(lBI a);
-	lBI logx(lBI a, lBI b, bool no_error = 1);
-	lBI logx_no_error(lBI a);
-	lBI pow(lBI a, lBI b, bool no_error = 1);
-	lBI pow_no_error(lBI a, lBI b);
+	lBI log10(lBI a);
+	lBI logx(lBI a, lBI b);
+	lBI pow(lBI a, lBI b);
 	lBI sqrtx(lBI a, lBI b);
 	lBI sqrt(lBI a);
 	lBI abs(lBI a);
@@ -325,7 +322,7 @@ namespace loong
 					}
 					else
 					{
-						printf("e%lg", log10({x, e}, 1).to_int());
+						printf("e%lg", log10({x, e}).to_int());
 					}
 				}
 			}			
@@ -1622,7 +1619,7 @@ namespace loong
 		}
 		else if (a < 0)
 		{
-			return {(- a) / std::pow(10, std::floor(std::log10(std::abs(a)))), std::floor(std::log10(std::abs(a)))};
+			return {a / std::pow(10, std::floor(std::log10(std::abs(a)))), std::floor(std::log10(std::abs(a)))};
 		}
 		else if (a == 0)
 		{
@@ -1679,81 +1676,111 @@ namespace loong
 			return a;
 		}
 	}
-	lBI log10(lBI a, bool no_error)
+	lBI log10(lBI a)
 	{
-		if (a <= lBI({0, 0}) && !no_error)
+		if (a < lBI({0, 0}))
 		{
-			throw std::invalid_argument("Natural number is invalid");
+			return lBI_NAN;
 		}
-		return int_to_lBI(std::log10(a.x)) + int_to_lBI(a.e);
-	}
-	lBI log10_no_error(lBI a)
-	{
-		return log10(a, 1);
-	}
-	lBI logx(lBI a, lBI b = {1, 1}, bool no_error)
-	{
-		if (!no_error)
+		else if (a == lBI({0, 0}))
 		{
-			if (((b <= lBI({0, 0})) || (b == lBI({1, 0}))) && (a <= lBI({0, 0})))
-			{
-				throw std::invalid_argument("Base number and natural number are invalid");
-			}
-			if ((b <= lBI({0, 0})) || (b == lBI({1, 0})))
-			{
-				throw std::invalid_argument("Base number is invalid");
-			}
-			if (a <= lBI({0, 0}))
-			{
-				throw std::invalid_argument("Natural number is invalid");
-			}
+			return lBI_Nev_True_Infinity;
 		}
-		return log10(a, no_error) / log10(b, no_error);
+		else
+		{
+			return int_to_lBI(std::log10(a.x)) + int_to_lBI(a.e);
+		}
 	}
-	lBI logx_no_error(lBI a, lBI b = {1, 1})
+	lBI logx(lBI a, lBI b = {1, 1})
 	{
-		return logx(a, b, 1);
+		return log10(a) / log10(b);
 	}
-	lBI pow(lBI a, lBI b, bool no_error)
+	lBI pow(lBI a, lBI b)
 	{
 		lBI tmp = {0, 0};
-		if (a.x == 0)
+		if (std::isnan(a.x) || std::isnan(a.e) || std::isnan(b.x) || std::isnan(b.e))
 		{
-			if (b <= lBI({0, 0}))
+			tmp.x = NAN;
+			tmp.e = NAN;
+		}
+		else if (a.x == 0)
+		{
+			if (b < lBI({0, 0}))
 			{
-				throw std::invalid_argument("Natural number is invalid");
+				tmp.x = INFINITY;
+				tmp.e = INFINITY;
 			}
-			tmp.e = 0;
-			tmp.x = 0;
+			else
+			{
+				tmp.e = 0;
+				tmp.x = 0;
+			}
+		}
+		else if (a.x == INFINITY || a.e == INFINITY || a.x == - INFINITY || a.e == - INFINITY)
+		{
+			if (b.x > 0)
+			{
+				tmp.x = INFINITY;
+				tmp.e = INFINITY;
+			}
+			else if (b.x == 0)
+			{
+				tmp.x = 1;
+				tmp.e = 0;
+			}
+			else
+			{
+				tmp.x = 0;
+				tmp.e = 0;
+			}
 		}
 		else if (a.x == 1)
 		{
-			tmp.e = (int_to_lBI(a.e) * b).to_int();
-			tmp.x = 1;
+			if (a.e == 0 && (b.x == INFINITY || b.e == INFINITY || b.x == - INFINITY || b.e == - INFINITY))
+			{
+				tmp.x = 1;
+				tmp.e = 0;
+			}
+			else
+			{
+				tmp.e = (int_to_lBI(a.e) * b).to_int();
+				tmp.x = 1;
+			}
 		}
-		else
+		else if (a.x > 1)
 		{
 			tmp.e = (int_to_lBI(a.e) * b + b * int_to_lBI(std::log10(a.x))).to_int();
 			tmp.x = 1;
 		}
-		tmp.format();
-		if ((std::isnan(tmp.x) || std::isnan(tmp.e)) && !no_error)
+		else
 		{
-			throw std::invalid_argument("Base number is invalid");
+			if (a.x == -1 && a.e == 0 && (b.x == INFINITY || b.e == INFINITY || b.x == - INFINITY || b.e == - INFINITY))
+			{
+				tmp.x = NAN;
+				tmp.e = NAN;
+			}
+			else if (b.e > 0 && !std::isnan(std::pow(-1, b.x)))
+			{
+				tmp.x = std::pow(std::pow(-1, b.x), pow(10, b.e));
+				tmp.e = (int_to_lBI(a.e) * b + b * int_to_lBI(std::log10(- a.x))).to_int();
+			}
+			else if (b.e < 0 && !std::isnan(std::pow(-1, b.x * pow(10, b.e))))
+			{
+				tmp.x = std::pow(-1, b.x * pow(10, b.e));
+				tmp.e = (int_to_lBI(a.e) * b + b * int_to_lBI(std::log10(- a.x))).to_int();
+			}
+			else
+			{
+				tmp.x = NAN;
+				tmp.e = NAN;
+			}
 		}
+		tmp.format();
 		return tmp;
-	}
-	lBI pow_no_error(lBI a, lBI b)
-	{
-		return pow(a, b, 1);
 	}
 	lBI sqrtx(lBI a, lBI b = {2, 0})
 	{
-		lBI tmp = pow(a, lBI({1, 0}) / b, 0);
-		if (std::isnan(tmp.x) || std::isnan(tmp.e))
-		{
-			throw std::invalid_argument("Radicand number is invalid");
-		}
+		lBI tmp = pow(a, lBI({1, 0}) / b);
 		return tmp;
 	}
 	lBI sqrt(lBI a)
