@@ -14,12 +14,12 @@ namespace loong
 {
 	struct lBI;
 	lBI int_to_lBI(double a = 0);
-	lBI plus(lBI a, lBI b);
-	lBI minus(lBI a, lBI b);
-	lBI multi(lBI a, lBI b);
-	lBI div(lBI a, lBI b);
-	lBI mod(lBI a, lBI b, bool no_error = 1);
-	lBI mod_no_error(lBI a, lBI b);
+	lBI lBI_plus(lBI a, lBI b);
+	lBI lBI_minus(lBI a, lBI b);
+	lBI lBI_multi(lBI a, lBI b);
+	lBI lBI_div(lBI a, lBI b);
+	lBI lBI_mod(lBI a, lBI b, bool no_error = 1);
+	lBI lBI_mod_no_error(lBI a, lBI b);
 	lBI floor(lBI a);
 	lBI ceil(lBI a);
 	lBI log10(lBI a);
@@ -1630,44 +1630,44 @@ namespace loong
 			return {a / std::pow(10, std::floor(std::log10(a))), std::floor(std::log10(a))};
 		}
 	}
-	lBI plus(lBI a, lBI b)
+	lBI lBI_plus(lBI a, lBI b)
 	{
 		return a + b;
 	}
-	lBI minus(lBI a, lBI b)
+	lBI lBI_minus(lBI a, lBI b)
 	{
 		return a - b;
 	}
-	lBI multi(lBI a, lBI b)
+	lBI lBI_multi(lBI a, lBI b)
 	{
 		return a * b;
 	}
-	lBI div(lBI a, lBI b)
+	lBI lBI_div(lBI a, lBI b)
 	{
 		return a / b;
 	}
-	lBI mod(lBI a, lBI b, bool no_error)
+	lBI lBI_mod(lBI a, lBI b, bool no_error)
 	{
 		if (no_error)
 		{
-			return mod_no_error(a, b);
+			return lBI_mod_no_error(a, b);
 		}
 		else
 		{
 			return a % b;
 		}
 	}
-	lBI mod_no_error(lBI a, lBI b)
+	lBI lBI_mod_no_error(lBI a, lBI b)
 	{
 		return int_to_lBI(std::fmod(a.x, lBI_to_int(b / int_to_lBI(std::pow(10, b.e)))) * std::pow(10, a.e));
 	}
 	lBI floor(lBI a)
 	{
-		return a - mod(a, lBI({1, 0}));
+		return a - lBI_mod(a, lBI({1, 0}));
 	}
 	lBI ceil(lBI a)
 	{
-		if (mod(a, lBI({1, 0})) != lBI({0, 0}))
+		if (lBI_mod(a, lBI({1, 0})) != lBI({0, 0}))
 		{
 			return floor(a) + lBI({1, 0});
 		}
@@ -2262,4 +2262,3 @@ namespace loong
 	}
 }
 #endif
-
