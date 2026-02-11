@@ -1759,7 +1759,7 @@ namespace loong
 				tmp.x = NAN;
 				tmp.e = NAN;
 			}
-			else if (b.e > 0 && !std::isnan(std::pow(-1, b.x)))
+			else if (b.e >= 0 && !std::isnan(std::pow(-1, b.x)))
 			{
 				tmp.x = std::pow(std::pow(-1, b.x), pow(10, b.e));
 				tmp.e = (int_to_lBI(a.e) * b + b * int_to_lBI(std::log10(- a.x))).to_int();
@@ -2262,3 +2262,4 @@ namespace loong
 	}
 }
 #endif
+
