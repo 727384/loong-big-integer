@@ -306,11 +306,11 @@ namespace loong
 				{
 					printf("-inf");
 				}
-				else if (std::fabs(e) < 9)
+				else if (std::fabs(e) < 6)
 				{
 					printf("%lg", lBI_to_int(*this));
 				}
-				else if (std::fabs(e) < 1e9)
+				else if (std::fabs(e) < 1e6)
 				{
 					printf("%lfe%lg", x, e);
 				}
@@ -340,11 +340,11 @@ namespace loong
 				{
 					printf("-inf");
 				}
-				else if (std::fabs(e) < 9)
+				else if (std::fabs(e) < 6)
 				{
 					printf("%lg", lBI_to_int(*this));
 				}
-				else if (std::fabs(e) < 1e9)
+				else if (std::fabs(e) < 1e6)
 				{
 					printf("%lf*10^%lg", x, e);
 				}
@@ -374,11 +374,11 @@ namespace loong
 				{
 					printf("-inf");
 				}
-				else if (std::fabs(e) < 9)
+				else if (std::fabs(e) < 6)
 				{
 					printf("%lg", lBI_to_int(*this));
 				}
-				else if (std::fabs(e) < 1e9)
+				else if (std::fabs(e) < 1e6)
 				{
 					printf("%lfx10^%lg", x, e);
 				}
@@ -663,11 +663,11 @@ namespace loong
 				{
 					return "-inf";
 				}
-				else if (std::fabs(e) < 9)
+				else if (std::fabs(e) < 6)
 				{
 					return std::to_string(lBI_to_int(*this));
 				}
-				else if (std::fabs(e) < 1e9)
+				else if (std::fabs(e) < 1e6)
 				{
 					return std::to_string(x) + "e" + std::to_string(e);
 				}
@@ -690,11 +690,11 @@ namespace loong
 				{
 					return "-inf";
 				}
-				else if (std::fabs(e) < 9)
+				else if (std::fabs(e) < 6)
 				{
 					return std::to_string(lBI_to_int(*this));
 				}
-				else if (std::fabs(e) < 1e9)
+				else if (std::fabs(e) < 1e6)
 				{
 					return std::to_string(x) + "*10^" + std::to_string(e);
 				}
@@ -717,11 +717,11 @@ namespace loong
 				{
 					return "-inf";
 				}
-				else if (std::fabs(e) < 9)
+				else if (std::fabs(e) < 6)
 				{
 					return std::to_string(lBI_to_int(*this));
 				}
-				else if (std::fabs(e) < 1e9)
+				else if (std::fabs(e) < 1e6)
 				{
 					return std::to_string(x) + "x10^" + std::to_string(e);
 				}
@@ -995,11 +995,11 @@ namespace loong
 				{
 					sprintf(buff, "-inf");
 				}
-				else if (std::fabs(e) < 9)
+				else if (std::fabs(e) < 6)
 				{
 					sprintf(buff, "%lg", lBI_to_int(*this));
 				}
-				else if (std::fabs(e) < 1e9)
+				else if (std::fabs(e) < 1e6)
 				{
 					sprintf(buff, "%lfe%lg", x, e);
 				}
@@ -1029,11 +1029,11 @@ namespace loong
 				{
 					sprintf(buff, "-inf");
 				}
-				else if (std::fabs(e) < 9)
+				else if (std::fabs(e) < 6)
 				{
 					sprintf(buff, "%lg", lBI_to_int(*this));
 				}
-				else if (std::fabs(e) < 1e9)
+				else if (std::fabs(e) < 1e6)
 				{
 					sprintf(buff, "%lf*10^%lg", x, e);
 				}
@@ -1063,11 +1063,11 @@ namespace loong
 				{
 					sprintf(buff, "-inf");
 				}
-				else if (std::fabs(e) < 9)
+				else if (std::fabs(e) < 6)
 				{
 					sprintf(buff, "%lg", lBI_to_int(*this));
 				}
-				else if (std::fabs(e) < 1e9)
+				else if (std::fabs(e) < 1e6)
 				{
 					sprintf(buff, "%lfx10^%lg", x, e);
 				}
@@ -1850,11 +1850,11 @@ namespace loong
 		{
 			os << "-inf";
 		}
-		else if (std::fabs(p.e) < 9)
+		else if (std::fabs(p.e) < 6)
 		{
 			os << lBI_to_int(p);
 		}
-		else if (std::fabs(p.e) < 1e9)
+		else if (std::fabs(p.e) < 1e6)
 		{
 			os << p.x << "e" << p.e;
 		}
