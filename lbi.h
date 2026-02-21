@@ -321,7 +321,7 @@ namespace loong
 						printf("-e%lg", log10(neg({x, e})).to_int());
 					}
 					else
-					{
+					{	
 						printf("e%lg", log10({x, e}).to_int());
 					}
 				}
@@ -1292,11 +1292,11 @@ namespace loong
 			{
 				if (tmp.e < ttmp.e)
 				{
-					return true;
+					return false;
 				}
 				else if (tmp.e > ttmp.e)
 				{
-					return false;
+					return true;
 				}
 				else
 				{
@@ -1351,11 +1351,11 @@ namespace loong
 			{
 				if (tmp.e < ttmp.e)
 				{
-					return true;
+					return false;
 				}
 				else if (tmp.e > ttmp.e)
 				{
-					return false;
+					return true;
 				}
 				else
 				{
@@ -1410,11 +1410,11 @@ namespace loong
 			{
 				if (tmp.e > ttmp.e)
 				{
-					return true;
+					return false;
 				}
 				else if (tmp.e < ttmp.e)
 				{
-					return false;
+					return true;
 				}
 				else
 				{
@@ -1469,11 +1469,11 @@ namespace loong
 			{
 				if (tmp.e > ttmp.e)
 				{
-					return true;
+					return false;
 				}
 				else if (tmp.e < ttmp.e)
 				{
-					return false;
+					return true;
 				}
 				else
 				{
@@ -1860,7 +1860,15 @@ namespace loong
 		}
 		else 
 		{
-			os << "e" << log10(p).to_int();
+			if (p < lBI({0, 0}))
+			{
+				os << "-e" << log10(neg(p)).to_int();
+			}
+			else
+			{
+				std::cout << 1;
+				os << "e" << log10(p).to_int();
+			}
 		}
 	    return os; 
 	}
