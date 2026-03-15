@@ -1262,7 +1262,15 @@ namespace loong
 			{
 				return false;
 			}
+			if (tmp.x < 0 && ttmp.x >= 0)
+			{
+				return false;
+			}
 			if (tmp.x > 0 && ttmp.x <= 0)
+			{
+				return true;
+			}
+			if (tmp.x >= 0 && ttmp.x < 0)
 			{
 				return true;
 			}
@@ -1292,11 +1300,11 @@ namespace loong
 			{
 				if (tmp.e < ttmp.e)
 				{
-					return false;
+					return true;
 				}
 				else if (tmp.e > ttmp.e)
 				{
-					return true;
+					return false;
 				}
 				else
 				{
@@ -1321,7 +1329,15 @@ namespace loong
 			{
 				return false;
 			}
+			if (tmp.x < 0 && ttmp.x >= 0)
+			{
+				return false;
+			}
 			if (tmp.x > 0 && ttmp.x <= 0)
+			{
+				return true;
+			}
+			if (tmp.x >= 0 && ttmp.x < 0)
 			{
 				return true;
 			}
@@ -1351,11 +1367,11 @@ namespace loong
 			{
 				if (tmp.e < ttmp.e)
 				{
-					return false;
+					return true;
 				}
 				else if (tmp.e > ttmp.e)
 				{
-					return true;
+					return false;
 				}
 				else
 				{
@@ -1380,7 +1396,15 @@ namespace loong
 			{
 				return true;
 			}
+			if (tmp.x < 0 && ttmp.x >= 0)
+			{
+				return true;
+			}
 			if (tmp.x > 0 && ttmp.x <= 0)
+			{
+				return false;
+			}
+			if (tmp.x >= 0 && ttmp.x < 0)
 			{
 				return false;
 			}
@@ -1410,11 +1434,11 @@ namespace loong
 			{
 				if (tmp.e > ttmp.e)
 				{
-					return false;
+					return true;
 				}
 				else if (tmp.e < ttmp.e)
 				{
-					return true;
+					return false;
 				}
 				else
 				{
@@ -1439,7 +1463,15 @@ namespace loong
 			{
 				return true;
 			}
+			if (tmp.x < 0 && ttmp.x >= 0)
+			{
+				return true;
+			}
 			if (tmp.x > 0 && ttmp.x <= 0)
+			{
+				return false;
+			}
+			if (tmp.x >= 0 && ttmp.x < 0)
 			{
 				return false;
 			}
@@ -1469,11 +1501,11 @@ namespace loong
 			{
 				if (tmp.e > ttmp.e)
 				{
-					return false;
+					return true;
 				}
 				else if (tmp.e < ttmp.e)
 				{
-					return true;
+					return false;
 				}
 				else
 				{
@@ -1678,7 +1710,19 @@ namespace loong
 	}
 	lBI log10(lBI a)
 	{
-		if (a < lBI({0, 0}))
+		if (std::isnan(a.x) || std::isnan(a.e))
+		{
+			return lBI_NAN;
+		}
+		else if (a == lBI_True_Infinity)
+		{
+			return lBI_True_Infinity;
+		}
+		else if (a == lBI_Nev_True_Infinity)
+		{
+			return lBI_NAN;
+		}
+		else if (a < lBI({0, 0}))
 		{
 			return lBI_NAN;
 		}
@@ -1866,7 +1910,6 @@ namespace loong
 			}
 			else
 			{
-				std::cout << 1;
 				os << "e" << log10(p).to_int();
 			}
 		}
