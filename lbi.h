@@ -1209,7 +1209,7 @@ namespace loong
 			{
 				if (x > 0)
 				{
-					return lBI({INFINITY, INFINITY});
+					return lBI_True_Infinity;
 				}
 				else if (x < 0)
 				{
