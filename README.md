@@ -24,6 +24,8 @@
 
 更新记录（`lbi.h`）
 ---
+2026.5.30 UPD：重构代码并新增`loong::hypot()`、`loong::log()`、`loong::exp()`函数及`lBI_E`、`lBI_PI`常量。真正移除了报错（`loong::lBI_mod_no_error`也因此删除）。
+
 2026.3.15 UPD：修复了一些bug。
 
 2026.2.21 UPD：修复了两个bug。
