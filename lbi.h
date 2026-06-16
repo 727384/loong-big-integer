@@ -1687,7 +1687,7 @@ namespace loong
 	{
 		if (std::isnan(a))
 		{
-			return lBI_NAN;
+			return lBI(NAN, NAN);
 		}
 		else if (a == INFINITY)
 		{
