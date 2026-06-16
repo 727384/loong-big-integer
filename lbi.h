@@ -6,15 +6,16 @@
 #include <string>
 #define lBI_E loong::lBI(M_E)
 #define lBI_PI loong::lBI(M_PI)
-#define lBI_Infinity loong::pow(loong::lBI({2, 0}), loong::lBI({1.024, 3}))
-#define lBI_Nev_Infinity loong::neg(loong::pow(loong::lBI({2, 0}), loong::lBI({1.024, 3})))
-#define lBI_True_Infinity loong::lBI({INFINITY, INFINITY})
-#define lBI_Nev_True_Infinity loong::lBI({- INFINITY, - INFINITY})
-#define lBI_NAN loong::lBI({NAN, NAN})
+#define lBI_Infinity loong::pow(loong::lBI(2, 0), loong::lBI(1.024, 3))
+#define lBI_Nev_Infinity loong::neg(loong::pow(loong::lBI(2, 0), loong::lBI(1.024, 3)))
+#define lBI_True_Infinity loong::lBI(INFINITY, INFINITY)
+#define lBI_Nev_True_Infinity loong::lBI(- INFINITY, - INFINITY)
+#define lBI_NAN loong::lBI(NAN, NAN)
 namespace loong
 {
 	struct lBI;
 	lBI int_to_lBI(double a = 0);
+	lBI str_to_lBI(std::string a = "");
 	lBI lBI_plus(lBI a, lBI b);
 	lBI lBI_minus(lBI a, lBI b);
 	lBI lBI_multi(lBI a, lBI b);
@@ -22,6 +23,7 @@ namespace loong
 	lBI lBI_mod(lBI a, lBI b);
 	lBI floor(lBI a);
 	lBI ceil(lBI a);
+	lBI round(lBI a);
 	lBI log(lBI a);
 	lBI log10(lBI a);
 	lBI logx(lBI a, lBI b);
@@ -47,8 +49,10 @@ namespace loong
 		double e;
 		lBI input()
 		{
-			scanf("%lf%lf", &x, &e);
-			return (*this).format();
+			std::string tmp;
+			getline(std::cin, tmp);
+			*this = str_to_lBI(tmp);
+			return str_to_lBI(tmp);
 		}
 		lBI print(int a = 9, bool b = 0)
 		{
@@ -62,11 +66,11 @@ namespace loong
 				{
 					printf("nan");
 				}
-				else if (x == INFINITY)
+				else if (x == INFINITY || e == INFINITY)
 				{
 					printf("inf");
 				}
-				else if (x == - INFINITY)
+				else if (x == - INFINITY || e == - INFINITY)
 				{
 					printf("-inf");
 				}
@@ -81,11 +85,11 @@ namespace loong
 				{
 					printf("nan");
 				}				
-				else if (x == INFINITY)
+				else if (x == INFINITY || e == INFINITY)
 				{
 					printf("inf");
 				}
-				else if (x == - INFINITY)
+				else if (x == - INFINITY || e == - INFINITY)
 				{
 					printf("-inf");
 				}
@@ -100,11 +104,11 @@ namespace loong
 				{
 					printf("nan");
 				}				
-				else if (x == INFINITY)
+				else if (x == INFINITY || e == INFINITY)
 				{
 					printf("inf");
 				}
-				else if (x == - INFINITY)
+				else if (x == - INFINITY || e == - INFINITY)
 				{
 					printf("-inf");
 				}
@@ -119,11 +123,11 @@ namespace loong
 				{
 					printf("nan");
 				}				
-				else if (x == INFINITY)
+				else if (x == INFINITY || e == INFINITY)
 				{
 					printf("inf");
 				}
-				else if (x == - INFINITY)
+				else if (x == - INFINITY || e == - INFINITY)
 				{
 					printf("-inf");
 				}
@@ -138,17 +142,17 @@ namespace loong
 				{
 					printf("nan");
 				}				
-				else if (x == INFINITY)
+				else if (x == INFINITY || e == INFINITY)
 				{
 					printf("inf");
 				}
-				else if (x == - INFINITY)
+				else if (x == - INFINITY || e == - INFINITY)
 				{
 					printf("-inf");
 				}
 				else if (x < 0)
 				{
-					printf("-e%lg", log10(neg({x, e})).to_int());
+					printf("-e%lg", log10(neg(*this)).to_int());
 				}
 				else if (x == 0)
 				{
@@ -156,7 +160,7 @@ namespace loong
 				}
 				else
 				{
-					printf("e%lg", log10(lBI({x, e})).to_int());
+					printf("e%lg", log10(*this).to_int());
 				}
 			}
 			else if (a == 5)
@@ -165,11 +169,11 @@ namespace loong
 				{
 					printf("nan");
 				}				
-				else if (x == INFINITY)
+				else if (x == INFINITY || e == INFINITY)
 				{
 					printf("inf");
 				}
-				else if (x == - INFINITY)
+				else if (x == - INFINITY || e == - INFINITY)
 				{
 					printf("-inf");
 				}
@@ -188,11 +192,11 @@ namespace loong
 				{
 					printf("nan");
 				}				
-				else if (x == INFINITY)
+				else if (x == INFINITY || e == INFINITY)
 				{
 					printf("inf");
 				}
-				else if (x == - INFINITY)
+				else if (x == - INFINITY || e == - INFINITY)
 				{
 					printf("-inf");
 				}
@@ -202,32 +206,32 @@ namespace loong
 				}
 				else if (x < 0)
 				{
-					if (log10(neg({x, e})) > lBI({0, 0}))
+					if (log10(neg(*this)) > lBI(0, 0))
 					{
-						printf("-ee%lg", log10(log10(neg({x, e}))).to_int());
+						printf("-ee%lg", log10(log10(neg(*this))).to_int());
 					}
-					else if (log10(neg({x, e})) == lBI({0, 0}))
+					else if (log10(neg(*this)) == lBI(0, 0))
 					{
 						printf("-ee(-inf)");
 					}
 					else
 					{
-						printf("-e(-e%lg)", log10(neg(log10(neg({x, e})))).to_int());
+						printf("-e(-e%lg)", log10(neg(log10(neg(*this)))).to_int());
 					}
 				}
 				else
 				{
-					if (log10(lBI({x, e})) > lBI({0, 0}))
+					if (log10(*this) > lBI(0, 0))
 					{
-						printf("ee%lg", log10(log10(lBI({x, e}))).to_int());
+						printf("ee%lg", log10(log10(*this)).to_int());
 					}
-					else if (log10(lBI({x, e})) == lBI({0, 0}))
+					else if (log10(*this) == lBI(0, 0))
 					{
 						printf("ee(-inf)");
 					}
 					else
 					{
-						printf("e(-e%lg)", log10(neg(log10(lBI({x, e})))).to_int());
+						printf("e(-e%lg)", log10(neg(log10(*this))).to_int());
 					}
 				}
 			}
@@ -237,11 +241,11 @@ namespace loong
 				{
 					printf("nan");
 				}				
-				else if (x == INFINITY)
+				else if (x == INFINITY || e == INFINITY)
 				{
 					printf("inf");
 				}
-				else if (x == - INFINITY)
+				else if (x == - INFINITY || e == - INFINITY)
 				{
 					printf("-inf");
 				}
@@ -251,32 +255,32 @@ namespace loong
 				}
 				else if (x < 0)
 				{
-					if (log10(neg({x, e})) > lBI({0, 0}))
+					if (log10(neg(*this)) > lBI(0, 0))
 					{
-						printf("-10^^%lg", log10(log10(neg({x, e}))).to_int());
+						printf("-10^^%lg", log10(log10(neg(*this))).to_int());
 					}
-					else if (log10(neg({x, e})) == lBI({0, 0}))
+					else if (log10(neg(*this)) == lBI(0, 0))
 					{
 						printf("-10^^(-inf)");
 					}
 					else
 					{
-						printf("-10^(-10^%lg)", log10(neg(log10(neg({x, e})))).to_int());
+						printf("-10^(-10^%lg)", log10(neg(log10(neg(*this)))).to_int());
 					}
 				}
 				else
 				{
-					if (log10(lBI({x, e})) > lBI({0, 0}))
+					if (log10(*this) > lBI(0, 0))
 					{
-						printf("10^^%lg", log10(log10(lBI({x, e}))).to_int());
+						printf("10^^%lg", log10(log10(*this)).to_int());
 					}
-					else if (log10(lBI({x, e})) == lBI({0, 0}))
+					else if (log10(*this) == lBI(0, 0))
 					{
 						printf("10^^(-inf)");
 					}
 					else
 					{
-						printf("10^(-10^%lg)", log10(neg(log10(lBI({x, e})))).to_int());
+						printf("10^(-10^%lg)", log10(neg(log10(*this))).to_int());
 					}
 				}
 			}
@@ -286,11 +290,11 @@ namespace loong
 				{
 					printf("nan");
 				}				
-				else if (x == INFINITY)
+				else if (x == INFINITY || e == INFINITY)
 				{
 					printf("inf");
 				}
-				else if (x == - INFINITY)
+				else if (x == - INFINITY || e == - INFINITY)
 				{
 					printf("-inf");
 				}
@@ -305,11 +309,11 @@ namespace loong
 				{
 					printf("nan");
 				}				
-				else if (x == INFINITY)
+				else if (x == INFINITY || e == INFINITY)
 				{
 					printf("inf");
 				}
-				else if (x == - INFINITY)
+				else if (x == - INFINITY || e == - INFINITY)
 				{
 					printf("-inf");
 				}
@@ -325,11 +329,11 @@ namespace loong
 				{
 					if (x < 0)
 					{
-						printf("-e%lg", log10(neg({x, e})).to_int());
+						printf("-e%lg", log10(neg(*this)).to_int());
 					}
 					else
 					{	
-						printf("e%lg", log10(lBI({x, e})).to_int());
+						printf("e%lg", log10(*this).to_int());
 					}
 				}
 			}			
@@ -339,11 +343,11 @@ namespace loong
 				{
 					printf("nan");
 				}				
-				else if (x == INFINITY)
+				else if (x == INFINITY || e == INFINITY)
 				{
 					printf("inf");
 				}
-				else if (x == - INFINITY)
+				else if (x == - INFINITY || e == - INFINITY)
 				{
 					printf("-inf");
 				}
@@ -359,11 +363,11 @@ namespace loong
 				{
 					if (x < 0)
 					{
-						printf("-10^^%lg", log10(neg({x, e})).to_int());
+						printf("-10^^%lg", log10(neg(*this)).to_int());
 					}
 					else
 					{
-						printf("10^^%lg", log10(lBI({x, e})).to_int());
+						printf("10^^%lg", log10(*this).to_int());
 					}
 				}
 			}			
@@ -373,11 +377,11 @@ namespace loong
 				{
 					printf("nan");
 				}				
-				else if (x == INFINITY)
+				else if (x == INFINITY || e == INFINITY)
 				{
 					printf("inf");
 				}
-				else if (x == - INFINITY)
+				else if (x == - INFINITY || e == - INFINITY)
 				{
 					printf("-inf");
 				}
@@ -393,11 +397,11 @@ namespace loong
 				{
 					if (x < 0)
 					{
-						printf("-10^^%lg", log10(neg({x, e})).to_int());
+						printf("-10^^%lg", log10(neg(*this)).to_int());
 					}
 					else
 					{
-						printf("10^^%lg", log10(lBI({x, e})).to_int());
+						printf("10^^%lg", log10(*this).to_int());
 					}
 				}
 			}			
@@ -405,7 +409,7 @@ namespace loong
 			{
 				printf("\n");
 			}
-			return {x, e};
+			return *this;
 		}
 		std::string to_str_old(int a = 9)
 		{
@@ -419,11 +423,11 @@ namespace loong
 				{
 					return "nan";
 				}				
-				else if (x == INFINITY)
+				else if (x == INFINITY || e == INFINITY)
 				{
 					return "inf";
 				}
-				else if (x == - INFINITY)
+				else if (x == - INFINITY || e == - INFINITY)
 				{
 					return "-inf";
 				}
@@ -438,11 +442,11 @@ namespace loong
 				{
 					return "nan";
 				}				
-				else if (x == INFINITY)
+				else if (x == INFINITY || e == INFINITY)
 				{
 					return "inf";
 				}
-				else if (x == - INFINITY)
+				else if (x == - INFINITY || e == - INFINITY)
 				{
 					return "-inf";
 				}
@@ -457,11 +461,11 @@ namespace loong
 				{
 					return "nan";
 				}				
-				else if (x == INFINITY)
+				else if (x == INFINITY || e == INFINITY)
 				{
 					return "inf";
 				}
-				else if (x == - INFINITY)
+				else if (x == - INFINITY || e == - INFINITY)
 				{
 					return "-inf";
 				}
@@ -476,11 +480,11 @@ namespace loong
 				{
 					return "nan";
 				}				
-				else if (x == INFINITY)
+				else if (x == INFINITY || e == INFINITY)
 				{
 					return "inf";
 				}
-				else if (x == - INFINITY)
+				else if (x == - INFINITY || e == - INFINITY)
 				{
 					return "-inf";
 				}
@@ -495,17 +499,17 @@ namespace loong
 				{
 					return "nan";
 				}				
-				else if (x == INFINITY)
+				else if (x == INFINITY || e == INFINITY)
 				{
 					return "inf";
 				}
-				else if (x == - INFINITY)
+				else if (x == - INFINITY || e == - INFINITY)
 				{
 					return "-inf";
 				}
 				else if (x < 0)
 				{
-					return "-e" + std::to_string(log10(neg({x, e})).to_int());
+					return "-e" + std::to_string(log10(neg(*this)).to_int());
 				}
 				else if (x == 0)
 				{
@@ -513,7 +517,7 @@ namespace loong
 				}
 				else
 				{
-					return "e" + std::to_string(log10(lBI({x, e})).to_int());
+					return "e" + std::to_string(log10(*this).to_int());
 				}
 			}
 			else if (a == 5)
@@ -522,11 +526,11 @@ namespace loong
 				{
 					return "nan";
 				}				
-				else if (x == INFINITY)
+				else if (x == INFINITY || e == INFINITY)
 				{
 					return "inf";
 				}
-				else if (x == - INFINITY)
+				else if (x == - INFINITY || e == - INFINITY)
 				{
 					return "-inf";
 				}
@@ -545,11 +549,11 @@ namespace loong
 				{
 					return "nan";
 				}				
-				else if (x == INFINITY)
+				else if (x == INFINITY || e == INFINITY)
 				{
 					return "inf";
 				}
-				else if (x == - INFINITY)
+				else if (x == - INFINITY || e == - INFINITY)
 				{
 					return "-inf";
 				}
@@ -559,32 +563,32 @@ namespace loong
 				}
 				else if (x < 0)
 				{
-					if (log10(neg({x, e})) > lBI({0, 0}))
+					if (log10(neg(*this)) > lBI(0, 0))
 					{
-						return "-ee" + std::to_string(log10(log10(neg({x, e}))).to_int());
+						return "-ee" + std::to_string(log10(log10(neg(*this))).to_int());
 					}
-					else if (log10(neg({x, e})) == lBI({0, 0}))
+					else if (log10(neg(*this)) == lBI(0, 0))
 					{
 						return "-ee(-inf)";
 					}
 					else
 					{
-						return "-e(-e" + std::to_string(log10(neg(log10(neg({x, e})))).to_int()) + ")";
+						return "-e(-e" + std::to_string(log10(neg(log10(neg(*this)))).to_int()) + ")";
 					}
 				}
 				else
 				{
-					if (log10(lBI({x, e})) > lBI({0, 0}))
+					if (log10(*this) > lBI(0, 0))
 					{
-						return "ee" + std::to_string(log10(log10(lBI({x, e}))).to_int());
+						return "ee" + std::to_string(log10(log10(*this)).to_int());
 					}
-					else if (log10(lBI({x, e})) == lBI({0, 0}))
+					else if (log10(*this) == lBI(0, 0))
 					{
 						return "ee(-inf)";
 					}
 					else
 					{
-						return "e(-e" + std::to_string(log10(neg(log10(lBI({x, e})))).to_int()) + ")";
+						return "e(-e" + std::to_string(log10(neg(log10(*this))).to_int()) + ")";
 					}
 				}
 			}
@@ -594,11 +598,11 @@ namespace loong
 				{
 					return "nan";
 				}				
-				else if (x == INFINITY)
+				else if (x == INFINITY || e == INFINITY)
 				{
 					return "inf";
 				}
-				else if (x == - INFINITY)
+				else if (x == - INFINITY || e == - INFINITY)
 				{
 					return "-inf";
 				}
@@ -608,32 +612,32 @@ namespace loong
 				}
 				else if (x < 0)
 				{
-					if (log10(neg({x, e})) > lBI({0, 0}))
+					if (log10(neg(*this)) > lBI(0, 0))
 					{
-						return "-10^^" + std::to_string(log10(log10(neg({x, e}))).to_int());
+						return "-10^^" + std::to_string(log10(log10(neg(*this))).to_int());
 					}
-					else if (log10(neg({x, e})) == lBI({0, 0}))
+					else if (log10(neg(*this)) == lBI(0, 0))
 					{
 						return "-10^^(-inf)";
 					}
 					else
 					{
-						return "-10^(-10^" + std::to_string(log10(neg(log10(neg({x, e})))).to_int()) + ")";
+						return "-10^(-10^" + std::to_string(log10(neg(log10(neg(*this)))).to_int()) + ")";
 					}
 				}
 				else
 				{
-					if (log10(lBI({x, e})) > lBI({0, 0}))
+					if (log10(*this) > lBI(0, 0))
 					{
-						return "10^^" + std::to_string(log10(log10(lBI({x, e}))).to_int());
+						return "10^^" + std::to_string(log10(log10(*this)).to_int());
 					}
-					else if (log10(lBI({x, e})) == lBI({0, 0}))
+					else if (log10(*this) == lBI(0, 0))
 					{
 						return "10^^(-inf)";
 					}
 					else
 					{
-						return "10^(-10^" + std::to_string(log10(neg(log10(lBI({x, e})))).to_int()) + ")";
+						return "10^(-10^" + std::to_string(log10(neg(log10(*this))).to_int()) + ")";
 					}
 				}
 			}
@@ -643,11 +647,11 @@ namespace loong
 				{
 					return "nan";
 				}				
-				else if (x == INFINITY)
+				else if (x == INFINITY || e == INFINITY)
 				{
 					return "inf";
 				}
-				else if (x == - INFINITY)
+				else if (x == - INFINITY || e == - INFINITY)
 				{
 					return "-inf";
 				}
@@ -662,11 +666,11 @@ namespace loong
 				{
 					return "nan";
 				}				
-				else if (x == INFINITY)
+				else if (x == INFINITY || e == INFINITY)
 				{
 					return "inf";
 				}
-				else if (x == - INFINITY)
+				else if (x == - INFINITY || e == - INFINITY)
 				{
 					return "-inf";
 				}
@@ -680,7 +684,7 @@ namespace loong
 				}
 				else 
 				{
-					return "e" + std::to_string(log10(lBI({x, e})).to_int());
+					return "e" + std::to_string(log10(*this).to_int());
 				}
 			}
 			else if (a == 10)
@@ -689,11 +693,11 @@ namespace loong
 				{
 					return "nan";
 				}				
-				else if (x == INFINITY)
+				else if (x == INFINITY || e == INFINITY)
 				{
 					return "inf";
 				}
-				else if (x == - INFINITY)
+				else if (x == - INFINITY || e == - INFINITY)
 				{
 					return "-inf";
 				}
@@ -707,7 +711,7 @@ namespace loong
 				}
 				else 
 				{
-					return "10^^" + std::to_string(log10(lBI({x, e})).to_int());
+					return "10^^" + std::to_string(log10(*this).to_int());
 				}
 			}
 			else if (a == 11)
@@ -716,11 +720,11 @@ namespace loong
 				{
 					return "nan";
 				}				
-				else if (x == INFINITY)
+				else if (x == INFINITY || e == INFINITY)
 				{
 					return "inf";
 				}
-				else if (x == - INFINITY)
+				else if (x == - INFINITY || e == - INFINITY)
 				{
 					return "-inf";
 				}
@@ -734,7 +738,7 @@ namespace loong
 				}
 				else 
 				{
-					return "10^^" + std::to_string(log10(lBI({x, e})).to_int());
+					return "10^^" + std::to_string(log10(*this).to_int());
 				}
 			}
 		}
@@ -751,11 +755,11 @@ namespace loong
 				{
 					sprintf(buff, "nan");
 				}			
-				else if (x == INFINITY)
+				else if (x == INFINITY || e == INFINITY)
 				{
 					sprintf(buff, "inf");
 				}
-				else if (x == - INFINITY)
+				else if (x == - INFINITY || e == - INFINITY)
 				{
 					sprintf(buff, "-inf");
 				}
@@ -770,11 +774,11 @@ namespace loong
 				{
 					sprintf(buff, "nan");
 				}			
-				else if (x == INFINITY)
+				else if (x == INFINITY || e == INFINITY)
 				{
 					sprintf(buff, "inf");
 				}
-				else if (x == - INFINITY)
+				else if (x == - INFINITY || e == - INFINITY)
 				{
 					sprintf(buff, "-inf");
 				}
@@ -789,11 +793,11 @@ namespace loong
 				{
 					sprintf(buff, "nan");
 				}			
-				else if (x == INFINITY)
+				else if (x == INFINITY || e == INFINITY)
 				{
 					sprintf(buff, "inf");
 				}
-				else if (x == - INFINITY)
+				else if (x == - INFINITY || e == - INFINITY)
 				{
 					sprintf(buff, "-inf");
 				}
@@ -808,11 +812,11 @@ namespace loong
 				{
 					sprintf(buff, "nan");
 				}			
-				else if (x == INFINITY)
+				else if (x == INFINITY || e == INFINITY)
 				{
 					sprintf(buff, "inf");
 				}
-				else if (x == - INFINITY)
+				else if (x == - INFINITY || e == - INFINITY)
 				{
 					sprintf(buff, "-inf");
 				}
@@ -827,17 +831,17 @@ namespace loong
 				{
 					sprintf(buff, "nan");
 				}			
-				else if (x == INFINITY)
+				else if (x == INFINITY || e == INFINITY)
 				{
 					sprintf(buff, "inf");
 				}
-				else if (x == - INFINITY)
+				else if (x == - INFINITY || e == - INFINITY)
 				{
 					sprintf(buff, "-inf");
 				}
 				else if (x < 0)
 				{
-					sprintf(buff, "-e%lg", log10(neg({x, e})).to_int());
+					sprintf(buff, "-e%lg", log10(neg(*this)).to_int());
 				}
 				else if (x == 0)
 				{
@@ -845,7 +849,7 @@ namespace loong
 				}
 				else
 				{
-					sprintf(buff, "e%lg", log10(lBI({x, e})).to_int());
+					sprintf(buff, "e%lg", log10(*this).to_int());
 				}
 			}
 			else if (a == 5)
@@ -854,11 +858,11 @@ namespace loong
 				{
 					sprintf(buff, "nan");
 				}			
-				else if (x == INFINITY)
+				else if (x == INFINITY || e == INFINITY)
 				{
 					sprintf(buff, "inf");
 				}
-				else if (x == - INFINITY)
+				else if (x == - INFINITY || e == - INFINITY)
 				{
 					sprintf(buff, "-inf");
 				}
@@ -877,11 +881,11 @@ namespace loong
 				{
 					sprintf(buff, "nan");
 				}			
-				else if (x == INFINITY)
+				else if (x == INFINITY || e == INFINITY)
 				{
 					sprintf(buff, "inf");
 				}
-				else if (x == - INFINITY)
+				else if (x == - INFINITY || e == - INFINITY)
 				{
 					sprintf(buff, "-inf");
 				}
@@ -891,32 +895,32 @@ namespace loong
 				}
 				else if (x < 0)
 				{
-					if (log10(neg({x, e})) > lBI({0, 0}))
+					if (log10(neg(*this)) > lBI(0, 0))
 					{
-						sprintf(buff, "-ee%lg", log10(log10(neg({x, e}))).to_int());
+						sprintf(buff, "-ee%lg", log10(log10(neg(*this))).to_int());
 					}
-					else if (log10(neg({x, e})) == lBI({0, 0}))
+					else if (log10(neg(*this)) == lBI(0, 0))
 					{
 						sprintf(buff, "-ee(-inf)");
 					}
 					else
 					{
-						sprintf(buff, "-e(-e%lg)", log10(neg(log10(neg({x, e})))).to_int());
+						sprintf(buff, "-e(-e%lg)", log10(neg(log10(neg(*this)))).to_int());
 					}
 				}
 				else
 				{
-					if (log10(lBI({x, e})) > lBI({0, 0}))
+					if (log10(*this) > lBI(0, 0))
 					{
-						sprintf(buff, "ee%lg", log10(log10(lBI({x, e}))).to_int());
+						sprintf(buff, "ee%lg", log10(log10(*this)).to_int());
 					}
-					else if (log10(lBI({x, e})) == lBI({0, 0}))
+					else if (log10(*this) == lBI(0, 0))
 					{
 						sprintf(buff, "ee(-inf)");
 					}
 					else
 					{
-						sprintf(buff, "e(-e%lg)", log10(neg(log10(lBI({x, e})))).to_int());
+						sprintf(buff, "e(-e%lg)", log10(neg(log10(*this))).to_int());
 					}
 				}
 			}
@@ -926,11 +930,11 @@ namespace loong
 				{
 					sprintf(buff, "nan");
 				}			
-				else if (x == INFINITY)
+				else if (x == INFINITY || e == INFINITY)
 				{
 					sprintf(buff, "inf");
 				}
-				else if (x == - INFINITY)
+				else if (x == - INFINITY || e == - INFINITY)
 				{
 					sprintf(buff, "-inf");
 				}
@@ -940,32 +944,32 @@ namespace loong
 				}
 				else if (x < 0)
 				{
-					if (log10(neg({x, e})) > lBI({0, 0}))
+					if (log10(neg(*this)) > lBI(0, 0))
 					{
-						sprintf(buff, "-10^^%lg", log10(log10(neg({x, e}))).to_int());
+						sprintf(buff, "-10^^%lg", log10(log10(neg(*this))).to_int());
 					}
-					else if (log10(neg({x, e})) == lBI({0, 0}))
+					else if (log10(neg(*this)) == lBI(0, 0))
 					{
 						sprintf(buff, "-10^^(-inf)");
 					}
 					else
 					{
-						sprintf(buff, "-10^(-10^%lg)", log10(neg(log10(neg({x, e})))).to_int());
+						sprintf(buff, "-10^(-10^%lg)", log10(neg(log10(neg(*this)))).to_int());
 					}
 				}
 				else
 				{
-					if (log10(lBI({x, e})) > lBI({0, 0}))
+					if (log10(*this) > lBI(0, 0))
 					{
-						sprintf(buff, "10^^%lg", log10(log10(lBI({x, e}))).to_int());
+						sprintf(buff, "10^^%lg", log10(log10(*this)).to_int());
 					}
-					else if (log10(lBI({x, e})) == lBI({0, 0}))
+					else if (log10(*this) == lBI(0, 0))
 					{
 						sprintf(buff, "10^^(-inf)");
 					}
 					else
 					{
-						sprintf(buff, "10^(-10^%lg)", log10(neg(log10(lBI({x, e})))).to_int());
+						sprintf(buff, "10^(-10^%lg)", log10(neg(log10(*this))).to_int());
 					}
 				}
 			}
@@ -975,11 +979,11 @@ namespace loong
 				{
 					sprintf(buff, "nan");
 				}			
-				else if (x == INFINITY)
+				else if (x == INFINITY || e == INFINITY)
 				{
 					sprintf(buff, "inf");
 				}
-				else if (x == - INFINITY)
+				else if (x == - INFINITY || e == - INFINITY)
 				{
 					sprintf(buff, "-inf");
 				}
@@ -994,11 +998,11 @@ namespace loong
 				{
 					sprintf(buff, "nan");
 				}			
-				else if (x == INFINITY)
+				else if (x == INFINITY || e == INFINITY)
 				{
 					sprintf(buff, "inf");
 				}
-				else if (x == - INFINITY)
+				else if (x == - INFINITY || e == - INFINITY)
 				{
 					sprintf(buff, "-inf");
 				}
@@ -1014,11 +1018,11 @@ namespace loong
 				{
 					if (x < 0)
 					{
-						sprintf(buff, "-e%lg", log10(neg({x, e})).to_int());
+						sprintf(buff, "-e%lg", log10(neg(*this)).to_int());
 					}
 					else
 					{
-						sprintf(buff, "e%lg", log10(lBI({x, e})).to_int());
+						sprintf(buff, "e%lg", log10(*this).to_int());
 					}
 				}
 			}			
@@ -1028,11 +1032,11 @@ namespace loong
 				{
 					sprintf(buff, "nan");
 				}			
-				else if (x == INFINITY)
+				else if (x == INFINITY || e == INFINITY)
 				{
 					sprintf(buff, "inf");
 				}
-				else if (x == - INFINITY)
+				else if (x == - INFINITY || e == - INFINITY)
 				{
 					sprintf(buff, "-inf");
 				}
@@ -1048,11 +1052,11 @@ namespace loong
 				{
 					if (x < 0)
 					{
-						sprintf(buff, "-10^^%lg", log10(neg({x, e})).to_int());
+						sprintf(buff, "-10^^%lg", log10(neg(*this)).to_int());
 					}
 					else
 					{
-						sprintf(buff, "10^^%lg", log10(lBI({x, e})).to_int());
+						sprintf(buff, "10^^%lg", log10(*this).to_int());
 					}
 				}
 			}			
@@ -1062,11 +1066,11 @@ namespace loong
 				{
 					sprintf(buff, "nan");
 				}			
-				else if (x == INFINITY)
+				else if (x == INFINITY || e == INFINITY)
 				{
 					sprintf(buff, "inf");
 				}
-				else if (x == - INFINITY)
+				else if (x == - INFINITY || e == - INFINITY)
 				{
 					sprintf(buff, "-inf");
 				}
@@ -1082,11 +1086,11 @@ namespace loong
 				{
 					if (x < 0)
 					{
-						sprintf(buff, "-10^^%lg", log10(neg({x, e})).to_int());
+						sprintf(buff, "-10^^%lg", log10(neg(*this)).to_int());
 					}
 					else
 					{
-						sprintf(buff, "10^^%lg", log10(lBI({x, e})).to_int());
+						sprintf(buff, "10^^%lg", log10(*this).to_int());
 					}
 				}
 			}
@@ -1118,13 +1122,13 @@ namespace loong
 			{
 				return lBI_NAN;
 			}
-			else if (x == INFINITY)
+			else if (x == INFINITY || e == INFINITY)
 			{
-				return lBI({INFINITY, INFINITY});
+				return lBI(INFINITY, INFINITY);
 			}
 			else if (x == - INFINITY)
 			{
-				return lBI_Nev_True_Infinity;
+				return lBI(- INFINITY, - INFINITY);
 			}
 			else
 			{
@@ -1153,77 +1157,77 @@ namespace loong
 					x = x;
 					e = e;
 				}
-				return {x, e};
+				return *this;
 			}
 		}
-		lBI operator+(const lBI t)const
+		lBI operator+(const lBI t) const
 		{
 			lBI tmp = {};
 			if (t.e > e)
 			{
-				tmp = {t.x + x * std::pow(10, e - t.e), t.e};
+				tmp = lBI(t.x + x * std::pow(10, e - t.e), t.e);
 			}
 			else if (t.e < e)
 			{
-				tmp = {t.x * std::pow(10, t.e - e) + x, e};
+				tmp = lBI(t.x * std::pow(10, t.e - e) + x, e);
 			}
 			else
 			{
-				tmp = {t.x + x, e};
+				tmp = lBI(t.x + x, e);
 			}
 			return tmp.format();
 		}
-		lBI operator-(const lBI t)const
+		lBI operator-(const lBI t) const
 		{
 			lBI tmp = {};
 			if (e > t.e)
 			{
-				tmp = {x - t.x * std::pow(10, t.e - e), e};
+				tmp = lBI(x - t.x * std::pow(10, t.e - e), e);
 			}
 			else if (e < t.e)
 			{
-				tmp = {x * std::pow(10, e - t.e) - t.x, t.e};
+				tmp = lBI(x * std::pow(10, e - t.e) - t.x, t.e);
 			}
 			else
 			{
-				tmp = {x - t.x, e};
+				tmp = lBI(x - t.x, e);
 			}
 			return tmp.format();
 		}
-		lBI operator*(const lBI t)const
+		lBI operator*(const lBI t) const
 		{
 			lBI tmp;
 			if ((t.e == - INFINITY && e == INFINITY) || (t.e == INFINITY && e == - INFINITY))
 			{
-				tmp = lBI_Nev_True_Infinity;
+				tmp = lBI(- INFINITY, - INFINITY);
 			}
 			else
 			{
-				tmp = {t.x * x, t.e + e};
+				tmp = lBI(t.x * x, t.e + e);
 			}
 			return tmp.format();
 		}
-		lBI operator/(const lBI t)const
+		lBI operator/(const lBI t) const
 		{
 			if (t.x == 0)
 			{
 				if (x > 0)
 				{
-					return lBI_True_Infinity;
+					return lBI(INFINITY, INFINITY);
 				}
 				else if (x < 0)
 				{
-					return lBI_Nev_True_Infinity;
+					return lBI(- INFINITY, - INFINITY);
 				}
 				else
 				{
 					return lBI_NAN;
 				}
 			}
-			lBI tmp = {x / t.x, e - t.e};
+			lBI tmp = lBI(x / t.x, e - t.e);
 			return tmp.format();
 		}
-		lBI operator%(const lBI t)const
+		lBI operator%(const lBI t) const
 		{
 			if (std::isnan(x) || std::isnan(e) || std::isnan(t.x) || std::isnan(t.e))
 			{
@@ -1233,7 +1237,7 @@ namespace loong
 			{
 				return lBI_NAN;
 			}
-			else if (t == lBI({0, 0}))
+			else if (t == lBI(0, 0))
 			{
 				return lBI_NAN;
 			}
@@ -1241,15 +1245,15 @@ namespace loong
 			{
 				return *this;
 			}
-			else if (t == lBI({0, 0}))
+			else if (t == lBI(0, 0))
 			{
-				return {0, 0};
+				return lBI(0, 0);
 			}
-			else if (lBI({std::fabs(x), e}) < t)
+			else if (lBI(std::fabs(x), e) < t)
 			{
 				return *this;
 			}
-			else if (lBI({std::fabs(x), e}) < lBI_Infinity && lBI({std::fabs(t.x), t.e}) < lBI_Infinity)
+			else if (lBI(std::fabs(x), e) < lBI_Infinity && lBI(std::fabs(t.x), t.e) < lBI_Infinity)
 			{
 				return lBI(std::fmod(lBI_to_int(*this), lBI_to_int(t)));
 			}
@@ -1258,7 +1262,7 @@ namespace loong
 		     	lBI tmp = *this / t;
 		     	if (tmp >= lBI_Infinity)
 		     	{
-		     		return {0, 0};
+		     		return lBI(0, 0);
 				}
 				else
 				{
@@ -1266,33 +1270,33 @@ namespace loong
 				}
 			}
 		}
-		lBI operator+()const
+		lBI operator+() const
 		{
 			return lBI_format(*this);
 		}
-		lBI operator-()const
+		lBI operator-() const
 		{
 			lBI tmp = *this;
-			tmp.x = - tmp.x;
+			tmp = lBI(0, 0) - tmp;
 			return tmp.format();
 		}
-		lBI operator<<(const lBI t)const
+		lBI operator<<(const lBI t) const
 		{
-			lBI tmp = {x, e};
-			return tmp * pow(lBI({2, 0}), t);
+			lBI tmp = *this;
+			return tmp * pow(lBI(2, 0), t);
 		}
-		lBI operator>>(const lBI t)const
+		lBI operator>>(const lBI t) const
 		{
-			lBI tmp = {x, e};
-			return tmp / pow(lBI({2, 0}), t);
+			lBI tmp = *this;
+			return tmp / pow(lBI(2, 0), t);
 		}
-		lBI operator~()const
+		lBI operator~() const
 		{
-			return - *this - lBI({1, 0});
+			return - *this - lBI(1, 0);
 		}
-		bool operator>(const lBI t)const
+		bool operator>(const lBI t) const
 		{
-			lBI tmp = {x, e};
+			lBI tmp = *this;
 			lBI ttmp = {t.x, t.e};
 			tmp.format();
 			ttmp.format();
@@ -1357,9 +1361,9 @@ namespace loong
 				}
 			}
 		}
-		bool operator>=(const lBI t)const
+		bool operator>=(const lBI t) const
 		{
-			lBI tmp = {x, e};
+			lBI tmp = *this;
 			lBI ttmp = {t.x, t.e};
 			tmp.format();
 			ttmp.format();
@@ -1424,9 +1428,9 @@ namespace loong
 				}
 			}
 		}
-		bool operator<(const lBI t)const
+		bool operator<(const lBI t) const
 		{
-			lBI tmp = {x, e};
+			lBI tmp = *this;
 			lBI ttmp = {t.x, t.e};
 			tmp.format();
 			ttmp.format();
@@ -1491,9 +1495,9 @@ namespace loong
 				}
 			}
 		}
-		bool operator<=(const lBI t)const
+		bool operator<=(const lBI t) const
 		{
-			lBI tmp = {x, e};
+			lBI tmp = *this;
 			lBI ttmp = {t.x, t.e};
 			tmp.format();
 			ttmp.format();
@@ -1558,9 +1562,9 @@ namespace loong
 				}
 			}
 		}
-		bool operator==(const lBI t)const
+		bool operator==(const lBI t) const
 		{
-			lBI tmp = {x, e};
+			lBI tmp = *this;
 			lBI ttmp = {t.x, t.e};
 			tmp.format();
 			ttmp.format();
@@ -1573,9 +1577,9 @@ namespace loong
 				return false;
 			}
 		}
-		bool operator!=(const lBI t)const
+		bool operator!=(const lBI t) const
 		{
-			lBI tmp = {x, e};
+			lBI tmp = *this;
 			lBI ttmp = {t.x, t.e};
 			tmp.format();
 			ttmp.format();
@@ -1615,25 +1619,25 @@ namespace loong
 		lBI operator++()
 		{
 			lBI tmp = *this;
-			*this = tmp + lBI({1, 0});
-			return tmp + lBI({1, 0});
+			*this = tmp + lBI(1, 0);
+			return tmp + lBI(1, 0);
 		}
 		lBI operator--()
 		{
 			lBI tmp = *this;
-			*this = *this - lBI({1, 0});
-			return tmp - lBI({1, 0});
+			*this = *this - lBI(1, 0);
+			return tmp - lBI(1, 0);
 		}
 		lBI operator++(int)
 		{
 			lBI tmp = *this;
-			*this = tmp + lBI({1, 0});
+			*this = tmp + lBI(1, 0);
 			return tmp;
 		}
 		lBI operator--(int)
 		{
 			lBI tmp = *this;
-			*this = *this - lBI({1, 0});
+			*this = *this - lBI(1, 0);
 			return tmp;
 		}
 		lBI operator<<=(const lBI t)
@@ -1648,29 +1652,35 @@ namespace loong
 			*this = t >> tmp;
 			return t >> tmp;
 		}
-		operator double()const
+		operator double() const
 		{
         	return lBI_to_int(*this);
     	}
-		operator std::string()const
+		operator std::string() const
 		{
         	return lBI_to_str(*this);
     	}
 		lBI()
 		{
-			this->x = 0;
-			this->e = 0;			 
+			this -> x = 0;
+			this -> e = 0;			 
 		}
 		lBI(double a)
 		{
 			lBI tmp = int_to_lBI(a);
-			this->x = tmp.x;
-			this->e = tmp.e;
+			this -> x = tmp.x;
+			this -> e = tmp.e;
 		}
 		lBI(double a, double b)
 		{
-			this->x = a;
-			this->e = b;
+			this -> x = a;
+			this -> e = b;
+		}		
+		lBI(std::string a)
+		{
+			lBI tmp = str_to_lBI(a);
+			this -> x = tmp.x;
+			this -> e = tmp.e;
 		}
 	};
 	lBI int_to_lBI(double a)
@@ -1681,24 +1691,87 @@ namespace loong
 		}
 		else if (a == INFINITY)
 		{
-			return lBI_True_Infinity;
+			return lBI(INFINITY, INFINITY);
 		}
 		else if (a == - INFINITY)
 		{
-			return lBI_Nev_True_Infinity;
+			return lBI(- INFINITY, - INFINITY);
 		}
 		else if (a < 0)
 		{
-			return {a / std::pow(10, std::floor(std::log10(std::abs(a)))), std::floor(std::log10(std::abs(a)))};
+			return lBI(a / std::pow(10, std::floor(std::log10(std::abs(a)))), std::floor(std::log10(std::abs(a))));
 		}
 		else if (a == 0)
 		{
-			return {0, 0};
+			return lBI(0, 0);
 		}
 		else
 		{
-			return {a / std::pow(10, std::floor(std::log10(a))), std::floor(std::log10(a))};
+			return lBI(a / std::pow(10, std::floor(std::log10(a))), std::floor(std::log10(a)));
 		}
+	}
+	lBI str_to_lBI(std::string a)
+	{
+		int e_count = 0;
+		int first_e_pos = 0;
+		int second_e_pos = 0;
+		lBI ans = lBI(0, 0);
+		if (a == "Infinity" || a == "inf")
+		{
+			return lBI(INFINITY, INFINITY);
+		}
+		if (a == "-Infinity" || a == "-inf")
+		{
+			return lBI(-INFINITY, -INFINITY);
+		}
+		if (a == "NaN" || a == "nan")
+		{
+			return lBI(NAN, NAN);
+		}
+		if (a.length() == 0)
+		{
+			return ans;
+		}
+		for (int i = 0; i < a.length(); i ++)
+		{
+			if (a[i] == 'e' || a[i] == 'E' || a[i] == ' ')
+			{
+				if (first_e_pos == 0 && e_count == 0)
+				{
+					first_e_pos = i;
+				}
+				else if (second_e_pos == 0)
+				{	
+					second_e_pos = i;
+				}
+				e_count ++;
+			}
+		}
+		if (e_count == 0)
+		{
+			ans = stod(a);
+		}
+		else
+		{
+			if (first_e_pos == 0)
+			{
+				ans.x = 1;
+				if (second_e_pos == 1)
+				{
+					ans.e = pow(10, stod(a.substr(2)));
+				}
+				else
+				{
+					ans.e = stod(a.substr(1));
+				}
+			}
+			else
+			{
+				ans.x = stod(a.substr(0, first_e_pos));
+				ans.e = stod(a.substr(first_e_pos + 1));
+			}
+		}
+		return ans.format();
 	}
 	lBI lBI_plus(lBI a, lBI b)
 	{
@@ -1722,17 +1795,28 @@ namespace loong
 	}
 	lBI floor(lBI a)
 	{
-		return a - lBI_mod(a, lBI({1, 0}));
+		return a - lBI_mod(a, lBI(1, 0));
 	}
 	lBI ceil(lBI a)
 	{
-		if (lBI_mod(a, lBI({1, 0})) != lBI({0, 0}))
+		if (lBI_mod(a, lBI(1, 0)) != lBI(0, 0))
 		{
-			return floor(a) + lBI({1, 0});
+			return floor(a) + lBI(1, 0);
 		}
 		else
 		{
 			return a;
+		}
+	}
+	lBI round(lBI a)
+	{
+		if (lBI_mod(a, lBI(1, 0)) >= lBI(5, -1))
+		{
+			return floor(a) + lBI(1, 0);
+		}
+		else
+		{
+			return floor(a);
 		}
 	}
 	lBI log(lBI a)
@@ -1745,34 +1829,34 @@ namespace loong
 		{
 			return lBI_NAN;
 		}
-		else if (a == lBI_True_Infinity)
+		else if (a == lBI(INFINITY, INFINITY))
 		{
-			return lBI_True_Infinity;
+			return lBI(INFINITY, INFINITY);
 		}
-		else if (a == lBI_Nev_True_Infinity)
+		else if (a == lBI(- INFINITY, - INFINITY))
 		{
 			return lBI_NAN;
 		}
-		else if (a < lBI({0, 0}))
+		else if (a < lBI(0, 0))
 		{
 			return lBI_NAN;
 		}
-		else if (a == lBI({0, 0}))
+		else if (a == lBI(0, 0))
 		{
-			return lBI_Nev_True_Infinity;
+			return lBI(- INFINITY, - INFINITY);
 		}
 		else
 		{
 			return int_to_lBI(std::log10(a.x)) + int_to_lBI(a.e);
 		}
 	}
-	lBI logx(lBI a, lBI b = {1, 1})
+	lBI logx(lBI a, lBI b = lBI(1, 1))
 	{
 		return log10(a) / log10(b);
 	}
 	lBI pow(lBI a, lBI b)
 	{
-		lBI tmp = {0, 0};
+		lBI tmp = lBI(0, 0);
 		if (std::isnan(a.x) || std::isnan(a.e) || std::isnan(b.x) || std::isnan(b.e))
 		{
 			tmp.x = NAN;
@@ -1855,9 +1939,9 @@ namespace loong
 		tmp.format();
 		return tmp;
 	}
-	lBI sqrtx(lBI a, lBI b = {2, 0})
+	lBI sqrtx(lBI a, lBI b = lBI(2, 0))
 	{
-		lBI tmp = pow(a, lBI({1, 0}) / b);
+		lBI tmp = pow(a, lBI(1, 0) / b);
 		return tmp;
 	}
 	lBI hypot(lBI a, lBI b)
@@ -1866,7 +1950,7 @@ namespace loong
 	}
 	lBI sqrt(lBI a)
 	{
-		return sqrtx(a, lBI({2, 0}));
+		return sqrtx(a, lBI(2, 0));
 	}
 	lBI exp(lBI a)
 	{
@@ -1874,11 +1958,11 @@ namespace loong
 	}
 	lBI abs(lBI a)
 	{
-		return {std::fabs(a.x), a.e};
+		return lBI(std::fabs(a.x), a.e);
 	}
 	lBI reci(lBI a)
 	{
-		return lBI({1, 0}) / a;
+		return lBI(1, 0) / a;
 	}
 	lBI neg(lBI a)
 	{
@@ -1917,8 +2001,10 @@ namespace loong
     }
 	std::istream& operator>>(std::istream& is, lBI& p) 
 	{
-	    is >> p.x >> p.e;
-	    p.format();
+		std::string tmp = "";
+		is >> std::ws;
+		getline(is, tmp);
+	    p = str_to_lBI(tmp);
 	    return is; 
 	}
 	std::ostream& operator<<(std::ostream& os, const lBI& p) 
@@ -1927,11 +2013,11 @@ namespace loong
 		{
 			os << "nan";
 		}
-		else if (p.x == INFINITY)
+		else if (p.x == INFINITY || p.e == INFINITY)
 		{
 			os << "inf";
 		}
-		else if (p.x == - INFINITY)
+		else if (p.x == - INFINITY || p.e == - INFINITY)
 		{
 			os << "-inf";
 		}
