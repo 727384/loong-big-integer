@@ -24,6 +24,8 @@
 
 更新记录（`lbi.h`）
 ---
+2026.6.16 UPD：再次重构代码并新增`loong::str_to_lBI()`函数，输入格式也因此改动。现在也可以从`std::string`构造了。
+
 2026.5.30 UPD：重构代码并新增`loong::hypot()`、`loong::log()`、`loong::exp()`函数及`lBI_E`、`lBI_PI`常量。真正移除了报错（`loong::lBI_mod_no_error`也因此删除）。
 
 2026.3.15 UPD：修复了一些bug。
