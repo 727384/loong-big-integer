@@ -35,6 +35,16 @@ namespace loong
 	lBI abs(lBI a);
 	lBI reci(lBI a);
 	lBI neg(lBI a);
+	lBI frexp(lBI a, lBI* b);
+	lBI ldexp(lBI a, lBI b);
+	lBI cos(lBI a);
+	lBI sin(lBI a);
+	lBI tan(lBI a);
+	lBI cosh(lBI a);
+	lBI sinh(lBI a);
+	lBI tanh(lBI a);
+	lBI acos(lBI a);
+	lBI asin(lBI a);
 	bool isnan(lBI a);
 	lBI lBI_format(lBI a);
 	lBI print_lBI(lBI a, int b, bool c);
@@ -1795,11 +1805,11 @@ namespace loong
 	}
 	lBI floor(lBI a)
 	{
-		return a - lBI_mod(a, lBI(1, 0));
+		return a - a % lBI(1, 0);
 	}
 	lBI ceil(lBI a)
 	{
-		if (lBI_mod(a, lBI(1, 0)) != lBI(0, 0))
+		if (a % lBI(1, 0) != lBI(0, 0))
 		{
 			return floor(a) + lBI(1, 0);
 		}
@@ -1810,7 +1820,7 @@ namespace loong
 	}
 	lBI round(lBI a)
 	{
-		if (lBI_mod(a, lBI(1, 0)) >= lBI(5, -1))
+		if (a % lBI(1, 0) >= lBI(5, -1))
 		{
 			return floor(a) + lBI(1, 0);
 		}
@@ -1967,6 +1977,125 @@ namespace loong
 	lBI neg(lBI a)
 	{
 		return - a;
+	}
+	lBI frexp(lBI a, lBI* b)
+	{
+		if (std::isnan(a.x) || std::isnan(a.e))
+		{
+			b -> x = NAN;
+			b -> e = NAN;
+			return lBI(NAN, NAN);
+		}
+		else if (a.x == INFINITY || a.e == INFINITY)
+		{
+			b -> x = INFINITY;
+			b -> e = INFINITY;
+			return lBI(INFINITY, INFINITY);
+		}
+		else if (a.x == - INFINITY || a.e == - INFINITY)
+		{
+			b -> x = - INFINITY;
+			b -> e = - INFINITY;
+			return lBI(- INFINITY, - INFINITY);
+		}
+		else if (a == lBI(0, 0))
+		{
+			b -> x = 0;
+			b -> e = 0;
+			return lBI(0, 0); 
+		}
+		else if (a < lBI(0, 0))
+		{
+			lBI tmp = logx(- a, lBI(2));
+			if (ceil(tmp) == tmp)
+			{
+				if (tmp < lBI(0, 0))
+				{
+					*b = tmp + lBI(1, 0);
+				}
+				else
+				{
+					*b = tmp - lBI(1, 0);
+				}
+				return lBI(-5, -1);
+			}
+			else
+			{
+				*b = ceil(tmp);
+				return - a / pow(lBI(2, 0), ceil(tmp));
+			}
+		}
+		else
+		{
+			lBI tmp = logx(a, lBI(2));
+			if (ceil(tmp) == tmp)
+			{
+				if (tmp < lBI(0, 0))
+				{
+					*b = tmp + lBI(1, 0);
+				}
+				else
+				{
+					*b = tmp - lBI(1, 0);
+				}
+				return lBI(5, -1);
+			}
+			else
+			{
+				*b = ceil(tmp);
+				return a / pow(lBI(2, 0), ceil(tmp));
+			}
+		}
+	}
+	lBI ldexp(lBI a, lBI b)
+	{
+		return a * pow(lBI(2, 0), b);
+	}
+	lBI cos(lBI a)
+	{
+		return std::cos(lBI_to_int(a % (lBI(2, 0) * lBI_PI)));
+	}
+	lBI sin(lBI a)
+	{
+		return std::sin(lBI_to_int(a % (lBI(2, 0) * lBI_PI)));
+	}
+	lBI tan(lBI a)
+	{
+		return sin(a) / cos(a);
+	}
+	lBI cosh(lBI a)
+	{
+		return (pow(lBI_E, a) + pow(lBI_E, - a)) / lBI(2, 0);
+	}
+	lBI sinh(lBI a)
+	{
+		return (pow(lBI_E, a) - pow(lBI_E, - a)) / lBI(2, 0);
+	}
+	lBI tanh(lBI a)
+	{
+		return sinh(a) / cosh(a);
+	}
+	lBI acos(lBI a)
+	{
+		if (lBI(-1, 0) <= a && a <= lBI(1, 0))
+		{
+			return lBI(std::acos(lBI_to_int(a)));
+		}
+		else
+		{
+			return lBI(NAN, NAN);
+		}
+	}
+	lBI asin(lBI a)
+	{
+		if (lBI(-1, 0) <= a && a <= lBI(1, 0))
+		{
+			return lBI(std::asin(lBI_to_int(a)));
+		}
+		else
+		{
+			return lBI(NAN, NAN);
+		}
 	}
 	bool isnan(lBI a)
 	{
