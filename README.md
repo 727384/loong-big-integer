@@ -24,6 +24,8 @@
 
 更新记录（`lbi.h`）
 ---
+2026.6.30 UPD：新增`std::hash<loong::lBI>`。
+
 2026.6.26 UPD：新增以下数学函数：
 - `loong::frexp()`；
 - `loong::ldexp()`；
