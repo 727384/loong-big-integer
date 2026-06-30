@@ -2568,4 +2568,15 @@ namespace loong
 		return tmp1 != lBI(tmp2);
 	}
 }
+namespace std 
+{
+    template <>
+    struct hash<loong::lBI> 
+	{
+        size_t operator()(loong::lBI p) const 
+		{
+            return hash<double>()(p.x) ^ hash<double>()(p.e);
+        }
+    };
+}
 #endif
