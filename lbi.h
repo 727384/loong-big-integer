@@ -14,9 +14,12 @@
 #define Nev_Infinity loong::neg(loong::pow(loong::lBI(2, 0), loong::lBI(1.024, 3)))
 #define True_Infinity loong::lBI(INFINITY, INFINITY)
 #define Nev_True_Infinity loong::lBI(- INFINITY, - INFINITY)
-#if __cplusplus < 201103L
+#define lBI_NAN loong::lBI(NAN, NAN)
+#if __cplusplus <= 199711L
 #define max(a, b) (a > b? a: b)
 #define min(a, b) (a > b? b: a)
+#endif
+#if !(!defined(__STRICT_ANSI__) || defined(_POSIX_C_SOURCE) || defined(_POSIX_SOURCE) || defined(_XOPEN_SOURCE) || defined(_GNU_SOURCE) || defined(_BSD_SOURCE) || defined(_USE_MATH_DEFINES))
 #define M_E	2.7182818284590452354
 #define M_PI 3.14159265358979323846
 #endif
@@ -1231,7 +1234,7 @@ namespace loong
 		{
 			if (std::isnan(x) || std::isnan(e))
 			{
-				return lBI_NAN;
+				return lBI(NAN, NAN);
 			}
 			else if (x == INFINITY || e == INFINITY)
 			{
@@ -1332,7 +1335,7 @@ namespace loong
 				}
 				else
 				{
-					return lBI_NAN;
+					return lBI(NAN, NAN);
 				}
 			}
 			lBI tmp(x / t.x, e - t.e);
@@ -1342,15 +1345,15 @@ namespace loong
 		{
 			if (std::isnan(x) || std::isnan(e) || std::isnan(t.x) || std::isnan(t.e))
 			{
-				return lBI_NAN;
+				return lBI(NAN, NAN);
 			}
 			else if (x == INFINITY || x == - INFINITY)
 			{
-				return lBI_NAN;
+				return lBI(NAN, NAN);
 			}
 			else if (t == lBI(0, 0))
 			{
-				return lBI_NAN;
+				return lBI(NAN, NAN);
 			}
 			else if (t.x == INFINITY || t.x == - INFINITY)
 			{
@@ -1940,7 +1943,7 @@ namespace loong
 	{
 		if (std::isnan(a.x) || std::isnan(a.e))
 		{
-			return lBI_NAN;
+			return lBI(NAN, NAN);
 		}
 		else if (a == lBI(INFINITY, INFINITY))
 		{
