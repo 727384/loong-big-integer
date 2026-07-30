@@ -10,7 +10,16 @@
 #define lBI_Nev_Infinity loong::neg(loong::pow(loong::lBI(2, 0), loong::lBI(1.024, 3)))
 #define lBI_True_Infinity loong::lBI(INFINITY, INFINITY)
 #define lBI_Nev_True_Infinity loong::lBI(- INFINITY, - INFINITY)
-#define lBI_NAN loong::lBI(NAN, NAN)
+#define Infinity loong::pow(loong::lBI(2, 0), loong::lBI(1.024, 3))
+#define Nev_Infinity loong::neg(loong::pow(loong::lBI(2, 0), loong::lBI(1.024, 3)))
+#define True_Infinity loong::lBI(INFINITY, INFINITY)
+#define Nev_True_Infinity loong::lBI(- INFINITY, - INFINITY)
+#if __cplusplus < 201103L
+#define max(a, b) (a > b? a: b)
+#define min(a, b) (a > b? b: a)
+#define M_E	2.7182818284590452354
+#define M_PI 3.14159265358979323846
+#endif
 namespace loong
 {
 	struct lBI;
@@ -49,7 +58,9 @@ namespace loong
 	lBI lBI_format(lBI a);
 	lBI print_lBI(lBI a, int b, bool c);
 	double lBI_to_int(lBI a);
+	#if __cplusplus >= 201103L
 	std::string lBI_to_str_old(lBI a, int b = 9);
+	#endif
     std::string lBI_to_str(lBI a, int b = 9);
 	std::istream& operator>>(std::istream& is, lBI& p);
 	std::ostream& operator<<(std::ostream& os, const lBI& p);
@@ -59,17 +70,18 @@ namespace loong
 		double e;
 		lBI input()
 		{
+			#if __cplusplus >= 201103L
 			std::string tmp;
 			getline(std::cin, tmp);
 			*this = str_to_lBI(tmp);
 			return str_to_lBI(tmp);
+			#else
+			scanf("%lf%lf", &x, &e);
+			return *this;
+			#endif
 		}
 		lBI print(int a = 9, bool b = 0)
 		{
-			if (a < 0 || a > 11)
-            {
-            	a = 9;
-			}
 			if (a == 0)
 			{
 				if (std::isnan(x) || std::isnan(e))
@@ -414,19 +426,50 @@ namespace loong
 						printf("10^^%lg", log10(*this).to_int());
 					}
 				}
-			}			
+			}
+			else
+			{
+				if (std::isnan(x) || std::isnan(e))
+				{
+					printf("nan");
+				}				
+				else if (x == INFINITY || e == INFINITY)
+				{
+					printf("inf");
+				}
+				else if (x == - INFINITY || e == - INFINITY)
+				{
+					printf("-inf");
+				}
+				else if (std::fabs(e) < 6)
+				{
+					printf("%lg", lBI_to_int(*this));
+				}
+				else if (fabs(e) < 1e6)
+				{
+					printf("%lfe%lg", x, e);
+				}
+				else 
+				{
+					if (x < 0)
+					{
+						printf("-e%lg", log10(neg(*this)).to_int());
+					}
+					else
+					{	
+						printf("e%lg", log10(*this).to_int());
+					}
+				}
+			}		
 			if (b)
 			{
 				printf("\n");
 			}
 			return *this;
 		}
+		#if __cplusplus >= 201103L
 		std::string to_str_old(int a = 9)
 		{
-			if (a < 0 || a > 11)
-            {
-            	a = 9;
-			}
 			if (a == 0)
 			{
 				if (std::isnan(x) || std::isnan(e))
@@ -751,14 +794,38 @@ namespace loong
 					return "10^^" + std::to_string(log10(*this).to_int());
 				}
 			}
+			else
+			{
+				if (std::isnan(x) || std::isnan(e))
+				{
+					return "nan";
+				}				
+				else if (x == INFINITY || e == INFINITY)
+				{
+					return "inf";
+				}
+				else if (x == - INFINITY || e == - INFINITY)
+				{
+					return "-inf";
+				}
+				else if (std::fabs(e) < 6)
+				{
+					return std::to_string(lBI_to_int(*this));
+				}
+				else if (std::fabs(e) < 1e6)
+				{
+					return std::to_string(x) + "e" + std::to_string(e);
+				}
+				else 
+				{
+					return "e" + std::to_string(log10(*this).to_int());
+				}
+			}
 		}
+		#endif
         std::string to_str(int a = 9)
 		{
             char buff[1024];
-            if (a < 0 || a > 11)
-            {
-            	a = 9;
-			}
 			if (a == 0)
 			{
 				if (std::isnan(x) || std::isnan(e))
@@ -1104,6 +1171,40 @@ namespace loong
 					}
 				}
 			}
+			else
+			{
+				if (std::isnan(x) || std::isnan(e))
+				{
+					sprintf(buff, "nan");
+				}			
+				else if (x == INFINITY || e == INFINITY)
+				{
+					sprintf(buff, "inf");
+				}
+				else if (x == - INFINITY || e == - INFINITY)
+				{
+					sprintf(buff, "-inf");
+				}
+				else if (std::fabs(e) < 6)
+				{
+					sprintf(buff, "%lg", lBI_to_int(*this));
+				}
+				else if (std::fabs(e) < 1e6)
+				{
+					sprintf(buff, "%lfe%lg", x, e);
+				}
+				else 
+				{
+					if (x < 0)
+					{
+						sprintf(buff, "-e%lg", log10(neg(*this)).to_int());
+					}
+					else
+					{
+						sprintf(buff, "e%lg", log10(*this).to_int());
+					}
+				}
+			}	
             std::string ans = buff;
 			return ans;
 		}
@@ -1172,7 +1273,7 @@ namespace loong
 		}
 		lBI operator+(const lBI t) const
 		{
-			lBI tmp = {};
+			lBI tmp(0, 0);
 			if (t.e > e)
 			{
 				tmp = lBI(t.x + x * std::pow(10, e - t.e), t.e);
@@ -1189,7 +1290,7 @@ namespace loong
 		}
 		lBI operator-(const lBI t) const
 		{
-			lBI tmp = {};
+			lBI tmp(0, 0);
 			if (e > t.e)
 			{
 				tmp = lBI(x - t.x * std::pow(10, t.e - e), e);
@@ -1206,7 +1307,7 @@ namespace loong
 		}
 		lBI operator*(const lBI t) const
 		{
-			lBI tmp;
+			lBI tmp(0, 0);
 			if ((t.e == - INFINITY && e == INFINITY) || (t.e == INFINITY && e == - INFINITY))
 			{
 				tmp = lBI(- INFINITY, - INFINITY);
@@ -1234,7 +1335,7 @@ namespace loong
 					return lBI_NAN;
 				}
 			}
-			lBI tmp = lBI(x / t.x, e - t.e);
+			lBI tmp(x / t.x, e - t.e);
 			return tmp.format();
 		}
 		lBI operator%(const lBI t) const
@@ -1307,7 +1408,7 @@ namespace loong
 		bool operator>(const lBI t) const
 		{
 			lBI tmp = *this;
-			lBI ttmp = {t.x, t.e};
+			lBI ttmp(t.x, t.e);
 			tmp.format();
 			ttmp.format();
 			if (tmp.x <= 0 && ttmp.x > 0)
@@ -1374,7 +1475,7 @@ namespace loong
 		bool operator>=(const lBI t) const
 		{
 			lBI tmp = *this;
-			lBI ttmp = {t.x, t.e};
+			lBI ttmp(t.x, t.e);
 			tmp.format();
 			ttmp.format();
 			if (tmp.x <= 0 && ttmp.x > 0)
@@ -1441,7 +1542,7 @@ namespace loong
 		bool operator<(const lBI t) const
 		{
 			lBI tmp = *this;
-			lBI ttmp = {t.x, t.e};
+			lBI ttmp(t.x, t.e);
 			tmp.format();
 			ttmp.format();
 			if (tmp.x <= 0 && ttmp.x > 0)
@@ -1508,7 +1609,7 @@ namespace loong
 		bool operator<=(const lBI t) const
 		{
 			lBI tmp = *this;
-			lBI ttmp = {t.x, t.e};
+			lBI ttmp(t.x, t.e);
 			tmp.format();
 			ttmp.format();
 			if (tmp.x <= 0 && ttmp.x > 0)
@@ -1575,7 +1676,7 @@ namespace loong
 		bool operator==(const lBI t) const
 		{
 			lBI tmp = *this;
-			lBI ttmp = {t.x, t.e};
+			lBI ttmp(t.x, t.e);
 			tmp.format();
 			ttmp.format();
 			if (tmp.e == ttmp.e && tmp.x == ttmp.x)
@@ -1590,7 +1691,7 @@ namespace loong
 		bool operator!=(const lBI t) const
 		{
 			lBI tmp = *this;
-			lBI ttmp = {t.x, t.e};
+			lBI ttmp(t.x, t.e);
 			tmp.format();
 			ttmp.format();
 			if (tmp.e != ttmp.e || tmp.x != ttmp.x)
@@ -1720,6 +1821,7 @@ namespace loong
 			return lBI(a / std::pow(10, std::floor(std::log10(a))), std::floor(std::log10(a)));
 		}
 	}
+	#if __cplusplus >= 201103L
 	lBI str_to_lBI(std::string a)
 	{
 		int e_count = 0;
@@ -1783,6 +1885,7 @@ namespace loong
 		}
 		return ans.format();
 	}
+	#endif
 	lBI lBI_plus(lBI a, lBI b)
 	{
 		return a + b;
@@ -1845,11 +1948,11 @@ namespace loong
 		}
 		else if (a == lBI(- INFINITY, - INFINITY))
 		{
-			return lBI_NAN;
+			return lBI(NAN, NAN);
 		}
 		else if (a < lBI(0, 0))
 		{
-			return lBI_NAN;
+			return lBI(NAN, NAN);
 		}
 		else if (a == lBI(0, 0))
 		{
@@ -1885,7 +1988,7 @@ namespace loong
 				tmp.e = 0;
 			}
 		}
-		else if (a.x == INFINITY || a.e == - INFINITY)
+		else if (a.x == INFINITY || a.e == INFINITY)
 		{
 			if (b.x > 0)
 			{
@@ -1905,7 +2008,7 @@ namespace loong
 		}
 		else if (a.x == 1)
 		{
-			if (a.e == 0 && (b.x == INFINITY || b.e == - INFINITY))
+			if (a.e == 0 && (b.x == INFINITY || b.e == INFINITY))
 			{
 				tmp.x = 1;
 				tmp.e = 0;
@@ -1923,26 +2026,6 @@ namespace loong
 		}
 		else
 		{
-			/*
-			if (a.x == -1 && a.e == 0 && (b.x == INFINITY || b.e == INFINITY || b.x == - INFINITY || b.e == - INFINITY))
-			{
-				tmp = lBI_NAN;
-			}
-			else if (b.e >= 0 && !std::isnan(std::pow(-1, b.x)))
-			{
-				tmp.x = std::pow(std::pow(-1, b.x), pow(10, b.e));
-				tmp.e = (int_to_lBI(a.e) * b + b * int_to_lBI(std::log10(- a.x))).to_int();
-			}
-			else if (b.e < 0 && !std::isnan(std::pow(-1, b.x * pow(10, b.e))))
-			{
-				tmp.x = std::pow(-1, b.x * pow(10, b.e));
-				tmp.e = (int_to_lBI(a.e) * b + b * int_to_lBI(std::log10(- a.x))).to_int();
-			}
-			else
-			{
-				tmp = lBI_NAN;
-			}
-			*/
 			tmp.x = NAN;
 			tmp.e = NAN;
 		}
@@ -1961,6 +2044,21 @@ namespace loong
 	lBI sqrt(lBI a)
 	{
 		return sqrtx(a, lBI(2, 0));
+	}
+	lBI cbrt(lBI a)
+	{
+		if (std::isnan(a.x) || std::isnan(a.e))
+		{
+			return lBI(NAN, NAN);
+		}
+		else if (a.x >= 0)
+		{
+			return pow(a, lBI(3, 0));
+		}
+		else 
+		{
+			return - pow(- a, lBI(3, 0));
+		}
 	}
 	lBI exp(lBI a)
 	{
@@ -2097,6 +2195,14 @@ namespace loong
 			return lBI(NAN, NAN);
 		}
 	}
+	lBI atan(lBI a)
+	{
+		return std::atan(lBI_to_int(a));
+	}
+	lBI atan2(lBI a, lBI b)
+	{
+		return std::atan2(lBI_to_int(a), lBI_to_int(b));
+	}
 	bool isnan(lBI a)
 	{
 		if (std::isnan(a.x) || std::isnan(a.e))
@@ -2120,21 +2226,28 @@ namespace loong
 	{
 		return a.to_int();
 	}
+	#if __cplusplus >= 201103L
 	std::string lBI_to_str_old(lBI a, int b)
 	{
 		return a.to_str_old(b);
 	}
+	#endif
     std::string lBI_to_str(lBI a, int b)
     {
         return a.to_str(b);
     }
 	std::istream& operator>>(std::istream& is, lBI& p) 
 	{
+		#if __cplusplus >= 201103L
 		std::string tmp = "";
 		is >> std::ws;
 		getline(is, tmp);
 	    p = str_to_lBI(tmp);
 	    return is; 
+	    #else
+	    is >> p.x >> p.e;
+	    return is;
+	    #endif
 	}
 	std::ostream& operator<<(std::ostream& os, const lBI& p) 
 	{		
@@ -2568,6 +2681,7 @@ namespace loong
 		return tmp1 != lBI(tmp2);
 	}
 }
+#if __cplusplus >= 201103L
 namespace std 
 {
     template <>
@@ -2579,4 +2693,5 @@ namespace std
         }
     };
 }
+#endif
 #endif
