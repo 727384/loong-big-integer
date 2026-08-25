@@ -3,7 +3,6 @@
 #include <iostream>
 #include <cstdio>
 #include <cmath>
-#include <string>
 #define lBI_E loong::lBI(M_E)
 #define lBI_PI loong::lBI(M_PI)
 #define lBI_Infinity loong::pow(loong::lBI(2, 0), loong::lBI(1.024, 3))
@@ -57,6 +56,8 @@ namespace loong
 	lBI tanh(lBI a);
 	lBI acos(lBI a);
 	lBI asin(lBI a);
+	lBI atan(lBI a);
+	lBI atan2(lBI a, lBI b);
 	bool isnan(lBI a);
 	lBI lBI_format(lBI a);
 	lBI print_lBI(lBI a, int b, bool c);
@@ -76,8 +77,7 @@ namespace loong
 			#if __cplusplus >= 201103L
 			std::string tmp;
 			getline(std::cin, tmp);
-			*this = str_to_lBI(tmp);
-			return str_to_lBI(tmp);
+			return *this = str_to_lBI(tmp);
 			#else
 			scanf("%lf%lf", &x, &e);
 			return *this;
