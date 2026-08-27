@@ -388,11 +388,11 @@ namespace loong
 				{
 					if (x < 0)
 					{
-						printf("-10^^%lg", log10(neg(*this)).to_int());
+						printf("-10^%lg", log10(neg(*this)).to_int());
 					}
 					else
 					{
-						printf("10^^%lg", log10(*this).to_int());
+						printf("10^%lg", log10(*this).to_int());
 					}
 				}
 			}			
@@ -422,11 +422,11 @@ namespace loong
 				{
 					if (x < 0)
 					{
-						printf("-10^^%lg", log10(neg(*this)).to_int());
+						printf("-10^%lg", log10(neg(*this)).to_int());
 					}
 					else
 					{
-						printf("10^^%lg", log10(*this).to_int());
+						printf("10^%lg", log10(*this).to_int());
 					}
 				}
 			}
@@ -767,7 +767,7 @@ namespace loong
 				}
 				else 
 				{
-					return "10^^" + std::to_string(log10(*this).to_int());
+					return "10^" + std::to_string(log10(*this).to_int());
 				}
 			}
 			else if (a == 11)
@@ -794,7 +794,7 @@ namespace loong
 				}
 				else 
 				{
-					return "10^^" + std::to_string(log10(*this).to_int());
+					return "10^" + std::to_string(log10(*this).to_int());
 				}
 			}
 			else
@@ -1132,11 +1132,11 @@ namespace loong
 				{
 					if (x < 0)
 					{
-						sprintf(buff, "-10^^%lg", log10(neg(*this)).to_int());
+						sprintf(buff, "-10^%lg", log10(neg(*this)).to_int());
 					}
 					else
 					{
-						sprintf(buff, "10^^%lg", log10(*this).to_int());
+						sprintf(buff, "10^%lg", log10(*this).to_int());
 					}
 				}
 			}			
@@ -1166,11 +1166,11 @@ namespace loong
 				{
 					if (x < 0)
 					{
-						sprintf(buff, "-10^^%lg", log10(neg(*this)).to_int());
+						sprintf(buff, "-10^%lg", log10(neg(*this)).to_int());
 					}
 					else
 					{
-						sprintf(buff, "10^^%lg", log10(*this).to_int());
+						sprintf(buff, "10^%lg", log10(*this).to_int());
 					}
 				}
 			}
