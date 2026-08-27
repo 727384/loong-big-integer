@@ -1,5 +1,5 @@
 # loong-big-integer
-（部分灵感来自于zlyxj的[breakinfinity/h](https://github/com/zlyxj/breakinfinity/h)）
+（部分灵感来自于zlyxj的[breakinfinity.h](https://github/com/zlyxj/breakinfinity.h)）
 
 一系列大整数库/头文件的结合。
 
