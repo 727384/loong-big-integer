@@ -15,8 +15,8 @@
 #define Nev_True_Infinity loong::lBI(- INFINITY, - INFINITY)
 #define lBI_NAN loong::lBI(NAN, NAN)
 #if __cplusplus <= 199711L
-#define max(a, b) (a > b? a: b)
-#define min(a, b) (a > b? b: a)
+#define max(a, b) ((a > b)? (a): (b))
+#define min(a, b) ((a > b)? (b): (a))
 #endif
 #if !(!defined(__STRICT_ANSI__) || defined(_POSIX_C_SOURCE) || defined(_POSIX_SOURCE) || defined(_XOPEN_SOURCE) || defined(_GNU_SOURCE) || defined(_BSD_SOURCE) || defined(_USE_MATH_DEFINES))
 #define M_E	2.7182818284590452354
@@ -1359,7 +1359,7 @@ namespace loong
 			{
 				return *this;
 			}
-			else if (t == lBI(0, 0))
+			else if (*this == lBI(0, 0))
 			{
 				return lBI(0, 0);
 			}
@@ -1757,14 +1757,14 @@ namespace loong
 		lBI operator<<=(const lBI t)
 		{
 			lBI tmp = *this;
-			*this = t << tmp;
-			return t << tmp;
+			*this = tmp << t;
+			return tmp << t;
 		}
 		lBI operator>>=(const lBI t)
 		{
 			lBI tmp = *this;
-			*this = t >> tmp;
-			return t >> tmp;
+			*this = tmp >> t;
+			return tmp >> t;
 		}
 		operator double() const
 		{
@@ -2056,11 +2056,11 @@ namespace loong
 		}
 		else if (a.x >= 0)
 		{
-			return pow(a, lBI(3, 0));
+			return pow(a, lBI(1, 0) / lBI(3, 0));
 		}
 		else 
 		{
-			return - pow(- a, lBI(3, 0));
+			return - pow(- a, lBI(1, 0) / lBI(3, 0));
 		}
 	}
 	lBI exp(lBI a)
