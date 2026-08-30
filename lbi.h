@@ -2,7 +2,10 @@
 #define ibi
 #include <iostream>
 #include <cstdio>
+#include <cstdlib>
 #include <cmath>
+#include <cstring>
+#include <string>
 #define lBI_E loong::lBI(M_E)
 #define lBI_PI loong::lBI(M_PI)
 #define lBI_Infinity loong::pow(loong::lBI(2, 0), loong::lBI(1.024, 3))
@@ -27,6 +30,7 @@ namespace loong
 	struct lBI;
 	lBI int_to_lBI(double a = 0);
 	lBI str_to_lBI(std::string a = "");
+	lBI str_to_lBI(const char* a = NULL);
 	lBI lBI_plus(lBI a, lBI b);
 	lBI lBI_minus(lBI a, lBI b);
 	lBI lBI_multi(lBI a, lBI b);
@@ -66,6 +70,7 @@ namespace loong
 	std::string lBI_to_str_old(lBI a, int b = 9);
 	#endif
     std::string lBI_to_str(lBI a, int b = 9);
+    const char* lBI_to_c_str(lBI a, int b = 9);
 	std::istream& operator>>(std::istream& is, lBI& p);
 	std::ostream& operator<<(std::ostream& os, const lBI& p);
 	struct lBI
@@ -74,14 +79,9 @@ namespace loong
 		double e;
 		lBI input()
 		{
-			#if __cplusplus >= 201103L
 			std::string tmp;
 			getline(std::cin, tmp);
 			return *this = str_to_lBI(tmp);
-			#else
-			scanf("%lf%lf", &x, &e);
-			return *this;
-			#endif
 		}
 		lBI print(int a = 9, bool b = 0)
 		{
@@ -1211,6 +1211,10 @@ namespace loong
             std::string ans = buff;
 			return ans;
 		}
+        const char* to_c_str(int a = 9)
+		{
+            return to_str(a).c_str();
+		}
 		double to_int()
 		{			
 			if (x == INFINITY)
@@ -1730,6 +1734,12 @@ namespace loong
 			*this = tmp / t;
 			return tmp / t;
 		}
+		lBI operator%=(const lBI t)
+		{
+			lBI tmp = *this;
+			*this = tmp % t;
+			return tmp % t;
+		}
 		lBI operator++()
 		{
 			lBI tmp = *this;
@@ -1770,6 +1780,10 @@ namespace loong
 		{
         	return lBI_to_int(*this);
     	}
+		operator const char*() const
+		{
+        	return lBI_to_c_str(*this);
+    	}
 		operator std::string() const
 		{
         	return lBI_to_str(*this);
@@ -1789,7 +1803,13 @@ namespace loong
 		{
 			this -> x = a;
 			this -> e = b;
-		}		
+		}			
+		lBI(const char* a)
+		{
+			lBI tmp = str_to_lBI(a);
+			this -> x = tmp.x;
+			this -> e = tmp.e;
+		}
 		lBI(std::string a)
 		{
 			lBI tmp = str_to_lBI(a);
@@ -1837,7 +1857,7 @@ namespace loong
 		}
 		if (a == "-Infinity" || a == "-inf")
 		{
-			return lBI(-INFINITY, -INFINITY);
+			return lBI(- INFINITY, - INFINITY);
 		}
 		if (a == "NaN" || a == "nan")
 		{
@@ -1887,6 +1907,97 @@ namespace loong
 			}
 		}
 		return ans.format();
+	}
+	lBI str_to_lBI(const char* a)
+	{
+		if (a == NULL)
+		{
+			return str_to_lBI(std::string(""));
+		}
+		else
+		{
+			return str_to_lBI(std::string(a));
+		}
+	}
+	#else
+	lBI str_to_lBI(const char* a)
+	{
+		int e_count = 0;
+		int first_e_pos = 0;
+		int second_e_pos = 0;
+		lBI ans = lBI(0, 0);
+		if (a == NULL)
+		{
+			return ans;
+		}
+		if (strcmp(a, "Infinity") == 0 || strcmp(a, "inf") == 0)
+		{
+			return lBI(INFINITY, INFINITY);
+		}
+		if (strcmp(a, "-Infinity") == 0 || strcmp(a, "-inf") == 0)
+		{
+			return lBI(- INFINITY, - INFINITY);
+		}
+		if (strcmp(a, "NaN") == 0 || strcmp(a, "nan") == 0)
+		{
+			return lBI(NAN, NAN);
+		}
+		if (strlen(a) == 0)
+		{
+			return ans;
+		}
+		for (int i = 0; i < strlen(a); i ++)
+		{
+			if (a[i] == 'e' || a[i] == 'E' || a[i] == ' ')
+			{
+				if (first_e_pos == 0 && e_count == 0)
+				{
+					first_e_pos = i;
+				}
+				else if (second_e_pos == 0)
+				{	
+					second_e_pos = i;
+				}
+				e_count ++;
+			}
+		}
+		if (e_count == 0)
+		{
+			ans = int_to_lBI(strtod(a, NULL));
+		}
+		else
+		{
+			if (first_e_pos == 0)
+			{
+				ans.x = 1;
+				if (second_e_pos == 1)
+				{	
+					char buff[1024];
+					memcpy(buff, a + 2, strlen(a) - 1);
+					ans.e = pow(10, strtod(buff, NULL));
+				}
+				else
+				{
+					char buff[1024];
+					memcpy(buff, a + 1, strlen(a));
+					ans.e = strtod(buff, NULL);
+				}
+			}
+			else
+			{
+				char buffa[1024], buffb[1024];
+				memcpy(buffa, a, first_e_pos);
+				buffa[first_e_pos] = '\0';
+				memcpy(buffb, a + first_e_pos + 1, strlen(a) - first_e_pos);
+				ans.x = strtod(buffa, NULL);
+				ans.e = strtod(buffb, NULL);
+			}
+		}
+		return ans.format();
+	}
+	lBI str_to_lBI(std::string a)
+	{
+		return str_to_lBI(a.c_str());
 	}
 	#endif
 	lBI lBI_plus(lBI a, lBI b)
@@ -2239,18 +2350,17 @@ namespace loong
     {
         return a.to_str(b);
     }
+    const char* lBI_to_c_str(lBI a, int b)
+    {
+        return a.to_c_str(b);
+    }
 	std::istream& operator>>(std::istream& is, lBI& p) 
 	{
-		#if __cplusplus >= 201103L
 		std::string tmp = "";
 		is >> std::ws;
 		getline(is, tmp);
 	    p = str_to_lBI(tmp);
 	    return is; 
-	    #else
-	    is >> p.x >> p.e;
-	    return is;
-	    #endif
 	}
 	std::ostream& operator<<(std::ostream& os, const lBI& p) 
 	{		
@@ -2356,6 +2466,10 @@ namespace loong
 		return tmp1 - lBI(tmp2);
 	}	
 	lBI operator-(lBI tmp1, long double tmp2)
+	{
+		return tmp1 - lBI(tmp2);
+	}	
+	lBI operator-(lBI tmp1, const char* tmp2)
 	{
 		return tmp1 - lBI(tmp2);
 	}	

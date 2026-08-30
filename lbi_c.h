@@ -464,20 +464,20 @@ struct lBI str_to_lBI(char* a)
 }
 struct lBI lBI_plus(struct lBI a, struct lBI b)
 {
-		struct lBI tmp = {0, 0};
-		if (b.e > a.e)
-		{
-			tmp = (struct lBI){b.x + a.x * pow(10, a.e - b.e), b.e};
-		}
-		else if (b.e < a.e)
-		{
-			tmp = (struct lBI){b.x * pow(10, b.e - a.e) + a.x, a.e};
-		}
-		else
-		{
-			tmp = (struct lBI){b.x + a.x, a.e};
-		}
-		return lBI_format(tmp);
+	struct lBI tmp = {0, 0};
+	if (b.e > a.e)
+	{
+		tmp = (struct lBI){b.x + a.x * pow(10, a.e - b.e), b.e};
+	}
+	else if (b.e < a.e)
+	{
+		tmp = (struct lBI){b.x * pow(10, b.e - a.e) + a.x, a.e};
+	}
+	else
+	{
+		tmp = (struct lBI){b.x + a.x, a.e};
+	}
+	return lBI_format(tmp);
 }
 struct lBI lBI_minus(struct lBI a, struct lBI b)
 {
