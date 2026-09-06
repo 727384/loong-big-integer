@@ -1780,10 +1780,6 @@ namespace loong
 		{
         	return lBI_to_int(*this);
     	}
-		operator const char*() const
-		{
-        	return lBI_to_c_str(*this);
-    	}
 		operator std::string() const
 		{
         	return lBI_to_str(*this);
@@ -1803,13 +1799,7 @@ namespace loong
 		{
 			this -> x = a;
 			this -> e = b;
-		}			
-		lBI(const char* a)
-		{
-			lBI tmp = str_to_lBI(a);
-			this -> x = tmp.x;
-			this -> e = tmp.e;
-		}
+		}	
 		lBI(std::string a)
 		{
 			lBI tmp = str_to_lBI(a);
@@ -1847,66 +1837,73 @@ namespace loong
 	#if __cplusplus >= 201103L
 	lBI str_to_lBI(std::string a)
 	{
-		int e_count = 0;
-		int first_e_pos = 0;
-		int second_e_pos = 0;
-		lBI ans = lBI(0, 0);
-		if (a == "Infinity" || a == "inf")
+		try
 		{
-			return lBI(INFINITY, INFINITY);
-		}
-		if (a == "-Infinity" || a == "-inf")
-		{
-			return lBI(- INFINITY, - INFINITY);
-		}
-		if (a == "NaN" || a == "nan")
-		{
-			return lBI(NAN, NAN);
-		}
-		if (a.length() == 0)
-		{
-			return ans;
-		}
-		for (int i = 0; i < a.length(); i ++)
-		{
-			if (a[i] == 'e' || a[i] == 'E' || a[i] == ' ')
+			int e_count = 0;
+			int first_e_pos = 0;
+			int second_e_pos = 0;
+			lBI ans = lBI(0, 0);
+			if (a == "Infinity" || a == "inf")
 			{
-				if (first_e_pos == 0 && e_count == 0)
-				{
-					first_e_pos = i;
-				}
-				else if (second_e_pos == 0)
-				{	
-					second_e_pos = i;
-				}
-				e_count ++;
+				return lBI(INFINITY, INFINITY);
 			}
-		}
-		if (e_count == 0)
-		{
-			ans = stod(a);
-		}
-		else
-		{
-			if (first_e_pos == 0)
+			if (a == "-Infinity" || a == "-inf")
 			{
-				ans.x = 1;
-				if (second_e_pos == 1)
+				return lBI(- INFINITY, - INFINITY);
+			}
+			if (a == "NaN" || a == "nan")
+			{
+				return lBI(NAN, NAN);
+			}
+			if (a.length() == 0)
+			{
+				return ans;
+			}
+			for (int i = 0; i < a.length(); i ++)
+			{
+				if (a[i] == 'e' || a[i] == 'E' || a[i] == ' ')
 				{
-					ans.e = pow(10, stod(a.substr(2)));
+					if (first_e_pos == 0 && e_count == 0)
+					{
+						first_e_pos = i;
+					}
+					else if (second_e_pos == 0)
+					{	
+						second_e_pos = i;
+					}
+					e_count ++;
 				}
-				else
-				{
-					ans.e = stod(a.substr(1));
-				}
+			}
+			if (e_count == 0)
+			{
+				ans = int_to_lBI(stod(a));
 			}
 			else
 			{
-				ans.x = stod(a.substr(0, first_e_pos));
-				ans.e = stod(a.substr(first_e_pos + 1));
+				if (first_e_pos == 0)
+				{
+					ans.x = 1;
+					if (second_e_pos == 1)
+					{
+						ans.e = std::pow(10, stod(a.substr(2)));
+					}
+					else
+					{
+						ans.e = stod(a.substr(1));
+					}
+				}
+				else
+				{
+					ans.x = stod(a.substr(0, first_e_pos));
+					ans.e = stod(a.substr(first_e_pos + 1));
+				}
 			}
+			return ans.format();
 		}
-		return ans.format();
+		catch (...)
+		{
+			return lBI(0, 0);
+		}
 	}
 	lBI str_to_lBI(const char* a)
 	{
@@ -2218,7 +2215,7 @@ namespace loong
 		}
 		else if (a < lBI(0, 0))
 		{
-			lBI tmp = logx(- a, lBI(2));
+			lBI tmp = logx(- a, lBI(2, 0));
 			if (ceil(tmp) == tmp)
 			{
 				if (tmp < lBI(0, 0))
@@ -2239,7 +2236,7 @@ namespace loong
 		}
 		else
 		{
-			lBI tmp = logx(a, lBI(2));
+			lBI tmp = logx(a, lBI(2, 0));
 			if (ceil(tmp) == tmp)
 			{
 				if (tmp < lBI(0, 0))
@@ -2265,11 +2262,11 @@ namespace loong
 	}
 	lBI cos(lBI a)
 	{
-		return std::cos(lBI_to_int(a % (lBI(2, 0) * lBI_PI)));
+		return int_to_lBI(std::cos(lBI_to_int(a % (lBI(2, 0) * lBI_PI))));
 	}
 	lBI sin(lBI a)
 	{
-		return std::sin(lBI_to_int(a % (lBI(2, 0) * lBI_PI)));
+		return int_to_lBI(std::sin(lBI_to_int(a % (lBI(2, 0) * lBI_PI))));
 	}
 	lBI tan(lBI a)
 	{
@@ -2311,11 +2308,11 @@ namespace loong
 	}
 	lBI atan(lBI a)
 	{
-		return std::atan(lBI_to_int(a));
+		return int_to_lBI(std::atan(lBI_to_int(a)));
 	}
 	lBI atan2(lBI a, lBI b)
 	{
-		return std::atan2(lBI_to_int(a), lBI_to_int(b));
+		return int_to_lBI(std::atan2(lBI_to_int(a), lBI_to_int(b)));
 	}
 	bool isnan(lBI a)
 	{
